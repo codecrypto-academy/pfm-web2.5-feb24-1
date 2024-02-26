@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ethers": "^6.11.1",
+    "web3": "^4.5.0"
+  },
+  "name": "curso-proyecto-faucet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}

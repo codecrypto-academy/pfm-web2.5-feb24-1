@@ -1,0 +1,8 @@
+1º
+docker run -it -v ${PWD}/password.txt:/password -v ${PWD}/data:/data ethereum/client-go:latest account new --datadir /data --password /password
+
+2º
+docker run -it -v ${PWD}/genesis.json:/genesis.json -v ${PWD}/data:/data ethereum/client-go:latest init --datadir /data /genesis.json
+
+3º 
+docker run -it -v ${PWD}/password.txt:/password -p 9999:8545 -v ${PWD}/data:/data ethereum/client-go:latest --datadir /data --allow-insecure-unlock --miner.etherbase 1398677c4ce540d01e01a6d355bdbeef5f2702fc --mine --unlock "1398677c4ce540d01e01a6d355bdbeef5f2702fc" --password /password --http --http.addr "0.0.0.0" --http.port 8545 --http.corsdomain "*" --http.api "admin,eth,debug,miner,net,txpool,personal,web3"

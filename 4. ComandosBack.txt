@@ -1,0 +1,5 @@
+1º Inicializamos el proyecto desde el back lanzando el siguiente comando:
+yarn init -y
+
+2º Importamos las libreria de express para el servidor del back:
+yarn add express mysql8

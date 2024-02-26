@@ -1,0 +1,18 @@
+1º CREAMOS UN PROYECTO REACT:
+yarn create vite curso-cesta-12 --template React
+Nos crea el directorio curso-cesta-12
+
+
+2º PASAMOS AL DIRECTORIO, abrimos el code:
+cd curso-cesta-12
+code .
+
+
+3º DENTRO DEL CODE:
+Menu-> Terminal -> Nuevo Terminal
+Ejecturar yarn (nos instala las dependencias)
+yarn dev
+Ir al navegador y acceder a http://localhost:3000
+
+4º Para enrutar, instalaremos las librerias:
+yarn add react-router-dom

@@ -1,0 +1,4 @@
+1º yarn add react-query
+
+2º Instlaamos el cors en el back:
+yarn add cors
