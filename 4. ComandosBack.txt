@@ -3,3 +3,6 @@ yarn init -y
 
 2º Importamos las libreria de express para el servidor del back:
 yarn add express mysql8
+
+3º Importamos libreria ethers
+yarn add ethers
