@@ -28,3 +28,13 @@ yarn add react-router-dom
 
 ** Importamos la libreria para manejar formularios
 yarn add react-hook-form
+
+** Importamos la libreria ya instalada del useState
+
+Aqui la logica sera un formulario con un input para el numero de cadena y un botton para añadir dicha cadena.
+Antes de añadir la cadena, habrá que comprobar que ese numero de cadena no este cogido ya, y asignamos un estado al useState.
+Entonces quedaría:
+
+> Añadimnos el ID
+
+> Pulsamos el boton > Verificamos si existe el numero de cadena > Si existe, lanzamos error avisando, sinó añadimos y lanzamos mensaje de OK

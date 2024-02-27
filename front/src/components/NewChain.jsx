@@ -14,6 +14,7 @@ export function NewChain(){
 
     //Declaramos un state error, para lanzar error en caso de que no exista, lo inizializamos como null
     const [error, setError] = useState(null);
+    const [ok, setOk] = useState(null);
 
     //Creamos la funcion para añadir la red, será asincrona
     async function createChain(){
@@ -28,16 +29,20 @@ export function NewChain(){
         //Comprobamos que el data llega desde el formulario
         console.log(chainID)
 
-        const exists = await fetch(`RUTA PARA LA FUNCIÓN DE COMPROBAR CHAIN DADO UN ID${chainID}`)
-        const result = await exists.json();
+        //Para testear que el formulario funciona, podemos comentar las 2 líneas de codigo siguiente, y descomentar la 3a, asi damos por hecho que el result esta vacio, pero si le asignamos un valor, vemos el cambio
+        //const exists = await fetch(`RUTA PARA LA FUNCIÓN DE COMPROBAR CHAIN DADO UN ID${chainID}`)
+        //result = await exists.json();
+        //const result = [] /* Aquí el valor estaria vacio, por ende estaria correcto */
+        const result = [0] /* Aquí habría un registro, simulando que ya esta utilizada el fetc, asi que sacaria un error */
 
         //Comprobamos el resultado
-        console.log(result)
+        console.log(result.length)
 
         //Si el resultado da 0, no existe, sino, ya esta en uso
-        if(result.lenght === 0){
+        if(result.length === 0){
             //Ejecutamos la funcion para añadir la red, con el parametro chainID
             createChain(chainID)
+            setOk("Chain añadida correctamente!")
 
         } else {
             //Avisamos por consola que no llega
@@ -45,16 +50,17 @@ export function NewChain(){
             setError("Este chain ID no está disponible")
         }
     }
-    return <div className="container mt-4">
+    return <div className="container mt-4"> 
         
-        {error && <h1 className="alert">{error}</h1>}
         <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group">
-                <label className="form-style" htmlFor="">Introduzca el número de red "ChainID"</label>
+                <label className="form-style">Introduzca el número de red "ChainID"</label>
                 <input {...register('chainID')} type="number" className="form-control"></input>
             </div>
             <button className="btn btn-primary mt-3">Añadir red</button>
         </form>
+        {error && <h1 className="alert alert-danger" role="alert">{error}</h1>}
+        {ok && <h1 className="alert alert-success" role="alert">{ok}</h1>}
     </div>
     
 }
