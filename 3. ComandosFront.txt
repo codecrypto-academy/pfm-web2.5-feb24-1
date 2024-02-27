@@ -12,7 +12,7 @@ code .
 Menu-> Terminal -> Nuevo Terminal
 Ejecturar yarn (nos instala las dependencias)
 yarn dev
-Ir al navegador y acceder a http://localhost:3000
+Ir al navegador y acceder a http://localhost:5173
 
 4º Para enrutar, instalaremos las librerias:
 yarn add react-router-dom
