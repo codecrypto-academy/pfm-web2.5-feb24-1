@@ -16,3 +16,15 @@ Ir al navegador y acceder a http://localhost:5173
 
 4º Para enrutar, instalaremos las librerias:
 yarn add react-router-dom
+
+
+
+
+////////////////////////////////////////////
+//
+//                 NewChain.jsx
+//
+////////////////////////////////////////////
+
+** Importamos la libreria para manejar formularios
+yarn add react-hook-form
