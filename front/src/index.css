@@ -69,6 +69,7 @@
 }
 
 .footer img {
+    /*Maximo de 30px el ancho de los iconos de las redes sociales*/
     max-width: 30px;
     margin-bottom: 20px;
 }
