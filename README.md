@@ -1,6 +1,7 @@
 # Proyecto_ETH
 
-He intentado subir la carpeta data pero me daba fallo un archivo, lo mejor es que os lo genereis nuevamente.
+Versiones:
+1.0.0: Proyecto base con pagina inicial y enrutados
 
 ## Getting started
 

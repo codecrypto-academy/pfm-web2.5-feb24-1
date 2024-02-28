@@ -15,7 +15,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
     "react-router-dom": "6",
-    "tsparticles": "^3.2.1"
+    "tsparticles": "^3.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.55",
@@ -26,5 +26,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
     "vite": "^5.1.0"
-  }
+  },
+  "main": "index.js",
+  "license": "MIT"
 }
