@@ -53,23 +53,32 @@ export function Inicio() {
             <main className="flex-grow-1">
                 <Outlet />
             </main>
+            {/* Componente Footer para ser usado en toda la aplicación */}
             <footer className="footer mt-auto py-3">
                 <div className="container">
+                    {/* Usa flexbox para alinear los elementos en filas y permitir una distribución responsiva */}
                     <div className="row justify-content-between">
+                        {/* Columna para enlaces rápidos con ajustes de responsividad y alineación */}
                         <div className="col-md-4 text-center text-md-left mb-3 mb-md-0">
                             <h5>Enlaces Rápidos</h5>
+                            {/* Lista de enlaces rápidos para navegación interna usando Link de React Router */}
                             <ul className="list-unstyled">
-                                <li><Link to="/quienes-somos" className="text-dark">Quiénes somos</Link></li>
-                                <li><Link to="/privacidad" className="text-dark">Privacidad</Link></li>
-                                <li><Link to="/terminos-y-condiciones" className="text-dark">Términos y condiciones</Link></li>
+                                <li><Link to="quienes-somos" className="text-dark">Quiénes somos</Link></li>
+                                <li><Link to="privacidad" className="text-dark">Privacidad</Link></li>
+                                <li><Link to="terminos-y-condiciones" className="text-dark">Términos y condiciones</Link></li>
                             </ul>
                         </div>
+                        {/* Columna central para información de contacto */}
                         <div className="col-md-4 text-center">
                             <h5>Contacto</h5>
+                            {/* Dirección de correo electrónico como punto de contacto */}
                             <p className="mb-0">contacto@bpen.com</p>
+                            {/* Logo de la empresa */}
                             <img src="/img/logo500x500.png" alt="Logo" />
                         </div>
+                        {/* Columna para iconos de redes sociales con enlaces externos */}
                         <div className="col-md-4 d-flex justify-content-center align-items-center mb-3 mb-md-0">
+                            {/* Enlaces a redes sociales que abren en una nueva pestaña para mantener al usuario en la página */}
                             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
                                 <p><img className="icono-social" src="/img/x-full.png" alt="X" /></p>
                             </a>
@@ -80,10 +89,10 @@ export function Inicio() {
                                 <p><img className="icono-social" src="/img/I-full.png" alt="Instagram" /></p>
                             </a>
                         </div>
-
                     </div>
                 </div>
             </footer>
+
         </div>
     );
 }

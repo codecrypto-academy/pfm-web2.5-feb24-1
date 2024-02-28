@@ -8,6 +8,9 @@ import { Inicio } from './components/Inicio.jsx'
 import { Perfil } from './components/Perfil.jsx'
 import { Redes } from './components/Redes.jsx'
 import { Nodos } from './components/Nodos.jsx'
+import { TerminosCondiciones } from './components/TerminosCondiciones.jsx'
+import { Privacidad } from './components/Privacidad.jsx'
+import { QuienesSomos } from './components/QuienesSomos.jsx'
 import './index.css'
 
 
@@ -29,6 +32,9 @@ function App() {
         <Route path='perfil' element={<Perfil></Perfil>}></Route>
         <Route path='redes' element={<Redes></Redes>}></Route>
         <Route path='nodos' element={<Nodos></Nodos>}></Route>
+        <Route path='terminos-y-condiciones' element={<TerminosCondiciones></TerminosCondiciones>}></Route>
+        <Route path='privacidad' element={<Privacidad></Privacidad>}></Route>
+        <Route path='quienes-somos' element={<QuienesSomos></QuienesSomos>}></Route>
       </Route>
     </Routes>
   </BrowserRouter >
