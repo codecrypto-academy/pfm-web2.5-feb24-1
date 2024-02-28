@@ -1,0 +1,90 @@
+/* index.css */
+
+.navbar-nav-custom {
+    margin-left: auto;
+}
+
+/* Ajustes para el logo */
+.navbar-logo img {
+    height: 120px;
+    /* Ajusta según necesites */
+    width: auto;
+    /* Mantiene la proporción del logo */
+}
+
+/* Se asegura de que el título se muestre en todas las resoluciones */
+.navbar-header {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+    /* Permite que los elementos se coloquen uno sobre otro */
+}
+
+/* Coloca el título encima de los botones en pantallas grandes */
+@media (min-width: 992px) {
+    .navbar {
+        flex-wrap: wrap;
+        /* Permite que la barra de navegación maneje elementos en múltiples líneas */
+    }
+
+    .navbar-header {
+        width: 100%;
+        /* Asegura que el título ocupe el ancho completo */
+        order: -1;
+        /* Coloca el título por encima de los botones */
+    }
+}
+
+/* Ajustes para el título para que sea visible en pantallas pequeñas y grandes */
+.navbar-brand {
+    display: inline-block;
+    /* Hace que el título sea en línea para mantener el comportamiento del link */
+    flex-grow: 0;
+    /* Evita que el título crezca */
+    width: auto;
+    /* Ajusta automáticamente el ancho del título */
+}
+
+/* Ajustes de responsive para los botones de navegación */
+.navbar-nav {
+    width: 100%;
+    justify-content: flex-end;
+    /* Alinea los botones a la derecha en pantallas pequeñas */
+}
+
+@media (min-width: 992px) {
+    .navbar-nav {
+        justify-content: center;
+        /* Centra los botones en pantallas grandes */
+    }
+}
+
+/* Nuevos estilos para footer */
+.footer {
+    background-color: #f8f9fa;
+    /*background-image: url("/img/footer.jpg");*/
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.footer img {
+    max-width: 30px;
+    margin-bottom: 20px;
+}
+
+.footer .text-dark {
+    color: #343a40;
+    /* Asume un color oscuro por defecto, ajusta según sea necesario */
+}
+
+.footer .social-icon {
+    width: 10px;
+    margin-right: 10px;
+    /* Ajusta el último icono manualmente para quitar el margen si es necesario */
+}
+
+/* Ajusta el último icono de redes sociales para quitar el margen extra */
+.footer .social-icon:last-child {
+    margin-right: 0;
+}
