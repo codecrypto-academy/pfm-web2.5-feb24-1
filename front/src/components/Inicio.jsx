@@ -14,19 +14,19 @@ export function Inicio() {
                 {/* Contenedor fluido para asegurar que el contenido del nav se ajuste al ancho del contenedor padre*/}
                 <div className="container-fluid">
                     {/* Div contenedor para el logo con enlace a la página principal*/}
-                    <div className="navbar-logo">
+                    <div className="navbar-logo col-md-3">
                         <Link to="/">
                             {/* Imagen del logo con su ruta y clases para el estilo*/}
                             <img src="/img/logo500x500.png" alt="Logo" className="logo-img" />
                         </Link>
                     </div>
                     {/* Div contenedor para el título de la página, con estilos de Bootstrap para centrarlo*/}
-                    <div className="navbar-title d-lg-flex justify-content-center align-items-center">
+                    <div className="navbar-title d-lg-flex justify-content-center align-items-center col-md-4 text-center">
                         {/* Elemento span que contiene el título de la página en un elemento h1*/}
-                        <span><h1>Build Private Ethereum Networks</h1></span>
+                        <span><p><h1>Build Private</h1></p><h1>Ethereum Networks</h1></span>
                     </div>
                     {/* Contenedor para los botones de navegación con un botón toggler para dispositivos móviles*/}
-                    <div className="navbar-buttons">
+                    <div className="navbar-buttons col-md-3">
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                             {/* Icono del botón toggler*/}
                             <span className="navbar-toggler-icon"></span>
@@ -79,13 +79,16 @@ export function Inicio() {
                         {/* Columna para iconos de redes sociales con enlaces externos */}
                         <div className="col-md-4 d-flex justify-content-center align-items-center mb-3 mb-md-0">
                             {/* Enlaces a redes sociales que abren en una nueva pestaña para mantener al usuario en la página */}
-                            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                            <a href="https://www.tiktok.com/@cryptospace_es" target="_blank" rel="noopener noreferrer">
+                                <p><img className="icono-social" src="/img/TIK-full.png" alt="Tiktok" /></p>
+                            </a>
+                            <a href="https://twitter.com/cryptospace_es" target="_blank" rel="noopener noreferrer">
                                 <p><img className="icono-social" src="/img/x-full.png" alt="X" /></p>
                             </a>
                             <a href="https://t.me/CryptoSpace_ES_Portal" target="_blank" rel="noopener noreferrer">
                                 <p><img className="icono-social" src="/img/TG-full.png" alt="Telegram" /></p>
                             </a>
-                            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                            <a href="https://instagram.com/cryptospace_es" target="_blank" rel="noopener noreferrer">
                                 <p><img className="icono-social" src="/img/I-full.png" alt="Instagram" /></p>
                             </a>
                         </div>
