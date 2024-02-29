@@ -1,0 +1,26 @@
+0. Crear contenedor:
+docker run -d --name orcl -p 1521:1521 -v c:\orcl:/opt/oracle/oradata -e ORACLE_PWD=manager container-registry.oracle.com/database/express:21.3.0-xe
+
+
+1. Creamos en DBEAVER una base de datos llamada "proyecto-nodo", con las siguientes características:
+host: 'localhost',
+port: 1521
+ServiceName: 'XE',
+user: 'system',
+password: 'my-secret-pw'
+
+2. En General, para el campo "Nombre de conexión" poner "proyecto-nodo".
+
+3. Probamos la conexión y si va OK, abrimos script y creamos el usuario "C##NODO" y le damos todos los permisos:
+CREATE USER C##NODO IDENTIFIED BY DATOS;
+GRANT DBA TO C##NODO;
+
+4. Copiamos el proyecto de base de datos llamado "proyecto-nodo" y creamos otro llamado:
+"proyecto-nodo-datos"
+
+Aquí nos conectaremos con el usuario "C##NODO" y su password es "DATOS" (sin comillas)
+
+5. Copiamos el contenido del archivo "/back/db.js" y lo pegamos en un script que será lanzado
+desde el proyecto "proyecto-nodo-datos".
+
+6. Adentro de C##NODO estará las tablas que se han creado con el script.
