@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-
+import { QueryClient, QueryClientProvider } from 'react-query'
 //import App from './App.jsx'
 import { NewChain } from './components/NewChain.jsx'
 import { Inicio } from './components/Inicio.jsx'
@@ -14,16 +14,10 @@ import { QuienesSomos } from './components/QuienesSomos.jsx'
 import './index.css'
 
 
-//Ruta rapida creada para yo poder ver el NewChain
+const queryClient = new QueryClient()
 function App() {
-  /*return <BrowserRouter >
-          <Routes>
-            <Route path='/' element={<NewChain></NewChain>}>
-              <Route path='/newchain' element={<NewChain></NewChain>}/>
-            </Route>
-          </Routes>
-        </BrowserRouter >*/
-  return <BrowserRouter >
+  return <QueryClientProvider client={queryClient}>
+  <BrowserRouter >
     <Routes>
       <Route path='/' element={<Inicio></Inicio>}>
         <Route index element={<NewChain></NewChain>}></Route>
@@ -38,6 +32,7 @@ function App() {
       </Route>
     </Routes>
   </BrowserRouter >
+  </QueryClientProvider>
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
