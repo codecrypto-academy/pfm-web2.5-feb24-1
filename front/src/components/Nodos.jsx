@@ -32,23 +32,39 @@ export function Nodos() {
         return <div>No se encontraron datos</div>;
     }
 
+    //Funcion para eliminar nodos
+    const eliminarNodos = (nodo) =>{
+        fetch(`http://localhost:5555/deleteNodo/${nodo}`).then((res) => {
+            if (!res) {
+                throw new Error('Hubo un error al eliminar el nodo')
+            }
+            return res.json()
+        })
+    }
     // Función para mostrar los nodos de la red seleccionada
     const mostrarNodos = () => {
         // Verifica si data y selectedChainID son válidos
         if (!data || !selectedChainID) {
             return <div>Selecciona una red válida para ver los nodos.</div>;
         }
-
         // Busca la red seleccionada por su ID
+        // Si encuentra datos con la red seleccionada, nos muestra los nodos, y nos aparece con un botón en cada uno para eliminar
+        // Sinó, nos lanza un error
         const redSeleccionada = data.find((chain) => chain.chainID === selectedChainID);
-
         if (redSeleccionada) {
             return (
                 <div>
                     <h2>Nodos de la red {redSeleccionada.chainID}:</h2>
                     <ul>
                         {redSeleccionada.nodos?.map((nodo) => (
-                            <li key={nodo}>{nodo}</li>
+                            <div>
+                                <table>
+                                    <tr>
+                                        <td><li key={nodo}>{nodo}</li></td>
+                                        <td><button type="button" className="btn btn-outline-primary" onSubmit={eliminarNodos(nodo)}>Eliminar</button></td>
+                                    </tr>
+                                </table>
+                            </div>
                         ))}
                     </ul>
                 </div>
