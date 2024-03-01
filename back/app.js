@@ -52,7 +52,7 @@ app.get("/levantar", async (req, res) => {
     console.log(cmd);
     execSync(cmd);
 
-    res.statusCode(200).send("Nodo iniciado")
+    res.status(200).send("Nodo iniciado")
 });
 
 
