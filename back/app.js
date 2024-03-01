@@ -2,13 +2,15 @@ const {Web3} = require("web3")
 const {ethers} = require("ethers")
 const fs = require("fs")
 
-
 //const web3 = new Web3("http://localhost:9999")
-
 
 const express = require("express");
 const cors = require("cors");
 const db = require('./db');
+const path = require("path");
+const { execSync } = require("child_process");
+
+PATH_NODO = path.join(__dirname, '../nodo')
 
 // Inicialización de la aplicación Express
 const app = express();
@@ -39,8 +41,19 @@ app.get("/redes", async (req, res) => {
     }
 });
 
+// Endpoint para crear
+app.get("/levantar", async (req, res) => {
+    const cmd = `docker run --name proyecto-eth-nodo -v ${PATH_NODO}/password.txt:/password -p 8545:8545 \
+    -v ${PATH_NODO}/data:/data ethereum/client-go:latest --datadir /data --allow-insecure-unlock \
+    --miner.etherbase 267d1477b48716439fec3fa1b0b1d40855db8aa1 --mine --unlock "267d1477b48716439fec3fa1b0b1d40855db8aa1" \
+    --password /password --http --http.addr "0.0.0.0" --http.port 8545 --http.corsdomain "*" \
+    --http.api "admin,eth,debug,miner,net,txpool,personal,web3"`
 
+    console.log(cmd);
+    execSync(cmd);
 
+    res.statusCode(200).send("Nodo iniciado")
+});
 
 
 /*
