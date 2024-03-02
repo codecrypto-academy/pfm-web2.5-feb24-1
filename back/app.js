@@ -1,17 +1,20 @@
 const {Web3} = require("web3")
 const {ethers} = require("ethers")
 const fs = require("fs")
+const path = require('path');
+const quote = require('shell-quote').quote;
 
 //const web3 = new Web3("http://localhost:9999")
 
 const express = require("express");
 const cors = require("cors");
 const db = require('./db');
-const path = require("path");
 const { execSync } = require("child_process");
 
-PATH_NODO = path.join(__dirname, '../nodo')
-
+// Arreglado problema con los espacios
+let pathNodo = path.join(__dirname, '../nodo').replace(/ /g, '\\ ');
+let PATH_NODO = quote([pathNodo]).replace(/'/g, '"');
+console.log(PATH_NODO);  
 // Inicialización de la aplicación Express
 const app = express();
 app.use(cors());

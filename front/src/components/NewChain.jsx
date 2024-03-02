@@ -18,37 +18,38 @@ export function NewChain(){
 
     //Creamos la funcion para añadir la red, será asincrona
     async function createChain(){
-        const url = `RUTA PARA LA FUNCION DE AÑADIR LA RED ${chainID}`
+        const url = `http://localhost/levantar`
         const response = await fetch(url)
     }
 
     const onSubmit = async (data) =>{
         
         const chainID = data.chainID;
-
+        createChain(chainID)
         //Comprobamos que el data llega desde el formulario
-        console.log(chainID)
+        //console.log(chainID)
 
         //Para testear que el formulario funciona, podemos comentar las 2 líneas de codigo siguiente, y descomentar la 3a, asi damos por hecho que el result esta vacio, pero si le asignamos un valor, vemos el cambio
         //const exists = await fetch(`RUTA PARA LA FUNCIÓN DE COMPROBAR CHAIN DADO UN ID${chainID}`)
         //result = await exists.json();
         //const result = [] /* Aquí el valor estaria vacio, por ende estaria correcto */
-        const result = [0] /* Aquí habría un registro, simulando que ya esta utilizada el fetc, asi que sacaria un error */
+       // const result = [0] /* Aquí habría un registro, simulando que ya esta utilizada el fetc, asi que sacaria un error */
 
         //Comprobamos el resultado
-        console.log(result.length)
+        //console.log(result.length)
 
         //Si el resultado da 0, no existe, sino, ya esta en uso
-        if(result.length === 0){
+       /* if(result.length === 0){
             //Ejecutamos la funcion para añadir la red, con el parametro chainID
             createChain(chainID)
             setOk("Chain añadida correctamente!")
 
         } else {
+            createChain(chainID)
             //Avisamos por consola que no llega
             console.log("Doesn´t exist");
             setError("Este chain ID no está disponible")
-        }
+        }*/
     }
     return <div className="container mt-4"> 
         
