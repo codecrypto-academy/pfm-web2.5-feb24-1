@@ -11,8 +11,8 @@ export function ListaNodo() {
     const [selectedChainID, setSelectedChainID] = useState(null);
 
     //Buscamos lista de redes
-    const { data, isLoading } = useQuery('products', () => {
-      return fetch('http://localhost:5555/products').then((res) => res.json());
+    const { data, isLoading } = useQuery('redes', () => {
+      return fetch('http://localhost:5555/redes').then((res) => res.json());
     });
   
     if (isLoading) {
@@ -21,12 +21,12 @@ export function ListaNodo() {
   
     // Función para mostrar los nodos de la red seleccionada
     const mostrarNodos = () => {
-      const redSeleccionada = data.find((chain) => chain.chainID === selectedChainID);
+      const redSeleccionada = data.find((chain) => chain.CHAIN_ID === selectedChainID);
   
       if (redSeleccionada) {
         return (
           <div>
-            <h2>Nodos de la red {redSeleccionada.chainID}:</h2>
+            <h2>Nodos de la red {redSeleccionada.CHAIN_ID}:</h2>
             <ul>
               {redSeleccionada.nodos.map((nodo) => (
                 <li key={nodo}>{nodo}</li>
@@ -51,8 +51,8 @@ export function ListaNodo() {
         >
           <option value="">Selecciona una red</option>
           {data.map((chain) => (
-            <option key={chain.chainID} value={chain.chainID}>
-              {chain.chainID}
+            <option key={chain.CHAIN_ID} value={chain.CHAIN_ID}>
+              {chain.CHAIN_ID}
             </option>
           ))}
         </select>

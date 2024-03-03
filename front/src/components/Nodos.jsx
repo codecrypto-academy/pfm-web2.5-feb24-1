@@ -15,8 +15,8 @@ export function Nodos() {
     const [chainError, setError] = useState(null)
 
     //Buscamos lista de redes
-    const { data, isLoading, error } = useQuery('products', () =>
-        fetch('http://localhost:5555/products').then((res) => {
+    const { data, isLoading, error } = useQuery('redes', () =>
+        fetch('http://localhost:5555/redes').then((res) => {
             if (!res.ok) {
                 throw new Error('Hubo un problema con la petición fetch');
             }
@@ -50,11 +50,11 @@ export function Nodos() {
         // Busca la red seleccionada por su ID
         // Si encuentra datos con la red seleccionada, nos muestra los nodos, y nos aparece con un botón en cada uno para eliminar
         // Sinó, nos lanza un error
-        const redSeleccionada = data.find((chain) => chain.chainID === selectedChainID);
+        const redSeleccionada = data.find((chain) => chain.CHAIN_ID === selectedChainID);
         if (redSeleccionada) {
             return (
                 <div>
-                    <h2>Nodos de la red {redSeleccionada.chainID}:</h2>
+                    <h2>Nodos de la red {redSeleccionada.CHAIN_ID}:</h2>
                     <ul>
                         {redSeleccionada.nodos?.map((nodo) => (
                             <div>
@@ -76,19 +76,18 @@ export function Nodos() {
     //Ahora creamos una lista, el select tiene la opcion de onChange, el cual nos cambiará el estado de la red seleccionada
     //Con el estado cambiado, fuera de el select, llamamos a la funcion mostrarNodos, que con la red seleccionada, nos mostrara todos los nodos de dicha red
     return (
-        <div>
+        <div><h1>Lista de redes:</h1>
             <select
                 className="form-select form-select-lg mb-3"
                 aria-label=".form-select-lg example"
                 onChange={(e) => setSelectedChainID(e.target.value)}
                 value={selectedChainID || ''} // Establece un valor predeterminado si selectedChainID está vacío
             >
-                <option value="">Selecciona una red</option>
                 {data.length > 0 ? (
                     // Renderiza las opciones solo si hay datos disponibles
                     data.map((chain) => (
-                        <option key={chain.chainID} value={chain.chainID}>
-                            {chain.chainID}
+                        <option key={chain.CHAIN_ID} value={chain.CHAIN_ID}>
+                            {chain.CHAIN_ID}
                         </option>
                     ))
                 ) : (
