@@ -11,6 +11,7 @@ import { Nodos } from './components/Nodos.jsx'
 import { TerminosCondiciones } from './components/TerminosCondiciones.jsx'
 import { Privacidad } from './components/Privacidad.jsx'
 import { QuienesSomos } from './components/QuienesSomos.jsx'
+import { Home } from './components/Home.jsx'
 import './index.css'
 
 
@@ -20,7 +21,7 @@ function App() {
   <BrowserRouter >
     <Routes>
       <Route path='/' element={<Inicio></Inicio>}>
-        <Route index element={<NewChain></NewChain>}></Route>
+        <Route index element={<Home></Home>}></Route>
         <Route path='*' element={<NewChain></NewChain>}></Route>
         <Route path='newchain' element={<NewChain></NewChain>}></Route>
         <Route path='perfil' element={<Perfil></Perfil>}></Route>

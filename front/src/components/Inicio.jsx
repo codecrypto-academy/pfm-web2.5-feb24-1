@@ -23,7 +23,7 @@ export function Inicio() {
                     {/* Div contenedor para el título de la página, con estilos de Bootstrap para centrarlo*/}
                     <div className="navbar-title d-lg-flex justify-content-center align-items-center col-md-4 text-center">
                         {/* Elemento span que contiene el título de la página en un elemento h1*/}
-                        <span><p><h1>Build Private</h1></p><h1>Ethereum Networks</h1></span>
+                        <span><h1><p>Build Private</p></h1><h1>Ethereum Networks</h1></span>
                     </div>
                     {/* Contenedor para los botones de navegación con un botón toggler para dispositivos móviles*/}
                     <div className="navbar-buttons col-md-3">
