@@ -23,7 +23,9 @@ export function Nodos() {
             return res.json();
         }));
     if (isLoading) {
-        return <div>Cargando...</div>;
+        return <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     }
     if (error) {
         return <div>Error: {error.message}</div>;
