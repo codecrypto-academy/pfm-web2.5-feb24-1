@@ -1,0 +1,4 @@
+=============== Mar 5, 2024 (UTC) ===============
+20:14:20.838858 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+20:14:20.860036 db@open opening
+20:14:20.867710 version@stat F·[] S·0B[] Sc·[]

@@ -126,7 +126,20 @@ app.post('/crearRed', (req, res) => {
     createGenesisFile(chainId, networkDir); // Crea el archivo de génesis
     createDockerComposeFile(chainId, networkDir); // Crea el archivo Docker Compose
 
-    res.json({ message: `Red con chainId ${chainId} ha sido creada exitosamente.` });
+    try {
+        // Construye el comando para ejecutar docker-compose up en el directorio correcto
+        const cmd = `docker-compose -f ${path.join(networkDir, 'docker-compose.yml')} up -d`;
+        // Ejecuta el comando
+        //console.log(cmd)
+        execSync(cmd);
+
+        console.log(`Red con chainId ${chainId} ha sido iniciada exitosamente.`);
+        res.json({ message: `Red con chainId ${chainId} ha sido creada e iniciada exitosamente. `});
+    } catch (error) {
+        console.error(`Error al iniciar la red con chainId ${chainId}:`, error);
+        res.status(500).send(`Error al iniciar la red con chainId ${chainId}.`);
+    }
+    
 });
 
 // Actualiza el archivo Docker Compose con la definición de un nuevo nodo
