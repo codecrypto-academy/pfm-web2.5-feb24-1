@@ -28,7 +28,9 @@ export function Home() {
         setShowButtons({});
     };
 
-    if (isLoading) return <div>Cargando listado de redes...</div>;
+    if (isLoading) return <div className="spinner-border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </div>
     if (error) return <div>Ocurrió un error al cargar las redes: {error.message}</div>;
 
     const toggleButtons = (id) => {
@@ -61,13 +63,13 @@ export function Home() {
                             <td>{new Date(red.FECHA_CREACION).toLocaleString()}</td>
                             <td className="text-center">
                                 <div ref={node}>
-                                    <button type="button" className="btn btn-light" onClick={() => toggleButtons(red.CHAIN_ID)}>
+                                    <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.CHAIN_ID)}>
                                         <span className="bi bi-gear"></span>
                                     </button>
                                     {showButtons[red.CHAIN_ID] && (
                                         <div style={{ position: 'absolute',  backgroundColor: 'white' }}>
-                                            <button type="button" className="btn btn-light">Añadir Nodo</button>
-                                            <button type="button" className="btn btn-light">Eliminar Nodo</button>
+                                            <button type="button" className="btn btn-light">Modificar Red</button>
+                                            <button type="button" className="btn btn-light">Eliminar Red</button>
                                         </div>
                                     )}
                                 </div>
@@ -76,6 +78,9 @@ export function Home() {
                     ))}
                 </tbody>
             </table>
+            <div className="d-flex justify-content-center">
+                <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href='http://localhost:5173/newchain'}>CREAR RED</button>
+            </div>
         </div>
     );
 }
