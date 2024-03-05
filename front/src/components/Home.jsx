@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 
 
 export function Home() {
+    //const [selectedChainID, setSelectedChainID] = useState(null);
+
     const { data, isLoading, error } = useQuery("redes", () => {
         // Cambia la URL a tu endpoint específico que devuelve las redes
         return fetch("http://localhost:5555/redes").then(res => res.json());
@@ -37,6 +39,9 @@ export function Home() {
                             <td>{red.WALLET_FIRMANTE}</td>
                             <td>{red.DESCRIPCION}</td>
                             <td>{new Date(red.FECHA_CREACION).toLocaleString()}</td>
+                            <td>
+                            <button type="button" class="btn btn-primary"><span class="bi bi-gear"></span> Sample Button</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
