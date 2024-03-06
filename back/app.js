@@ -7,7 +7,7 @@ const quote = require('shell-quote').quote;
 const express = require("express");
 const cors = require("cors");
 const db = require('./db');
-const { execSync } = require("child_process");
+const { exec, execSync } = require("child_process");
 const yaml = require('js-yaml');
 
 // Arreglado problema con los espacios
@@ -111,29 +111,29 @@ function createGenesisFile(chainId, networkDir) {
     const genesisPath = path.join(networkDir, 'genesis.json');
     const genesis = {
         // Configuración básica de la red Ethereum, incluyendo el chainId y configuraciones para EIPs
-        config: {
-            chainId: chainId,
-            homesteadBlock: 0,
-            eip150Block: 0,
-            eip155Block: 0,
-            eip158Block: 0,
-            byzantiumBlock: 0,
-            constantinopleBlock: 0,
-            petersburgBlock: 0,
-            istanbulBlock: 0,
-            clique: {
-                period: 15,
-                epoch: 30000,
+        "config": {
+            "chainId": chainId,
+            "homesteadBlock": 0,
+            "eip150Block": 0,
+            "eip155Block": 0,
+            "eip158Block": 0,
+            "byzantiumBlock": 0,
+            "constantinopleBlock": 0,
+            "petersburgBlock": 0,
+            "istanbulBlock": 0,
+            "clique": {
+                "period": 15,
+                "epoch": 30000,
             },
         },
-        nonce: "0x0",
-        timestamp: "0x5e9d4d7c",
-        extraData: "0x00",
-        gasLimit: "0x2fefd8",
-        difficulty: "0x1",
-        mixHash: "0x63746963616c636861696e2d686173682d67656e657369732d68617368",
-        parentHash: "0x0000000000000000000000000000000000000000000000000000000000000000",
-        alloc: {},
+        "nonce": "0x0",
+        "timestamp": "0x5e9d4d7c",
+        "extraData": "0x00",
+        "gasLimit": "0x2fefd8",
+        "difficulty": "0x1",
+        "mixHash": "0x63746963616c636861696e2d686173682d67656e657369732d68617368",
+        "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "alloc": {},
     };
     fs.writeFileSync(genesisPath, JSON.stringify(genesis, null, 4));
 }
@@ -146,12 +146,12 @@ version: '3'
 services:
   node:
     image: ethereum/client-go:latest
-    command: --datadir /data --networkid ${chainId} --http --http.addr 0.0.0.0 --http.port 8546 --http.corsdomain "*" --http.api eth,web3,personal,net --allow-insecure-unlock --nodiscover
+    command: --datadir /data --networkid ${chainId} --http --http.addr 0.0.0.0 --http.port 99999 --http.corsdomain "*" --http.api eth,web3,personal,net --allow-insecure-unlock --nodiscover
     volumes:
       - ./data:/data
     ports:
-      - "8546:8546"
-      - "30303:30303"
+      - "99999:99999"
+      - "303003:303003"
 networks:
   default:
     name: eth-net-${chainId}
@@ -171,7 +171,18 @@ app.post('/crearRed', (req, res) => {
     createGenesisFile(chainId, networkDir); // Crea el archivo de génesis
     createDockerComposeFile(chainId, networkDir); // Crea el archivo Docker Compose
 
-    try {
+    const cmd = `docker-compose -f ${path.join(networkDir, 'docker-compose.yml')} up -d`;
+
+        execSync(cmd, { shell: 'powershell.exe' }, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error al iniciar la red con chainId ${chainId}:`, error);
+                res.status(500).send(`Error al iniciar la red con chainId ${chainId}.`);
+                return;
+            }
+            console.log(`Red con chainId ${chainId} ha sido iniciada exitosamente.`);
+            res.json({ message: `Red con chainId ${chainId} ha sido creada e iniciada exitosamente. `});
+        });
+    /*try {
         // Construye el comando para ejecutar docker-compose up en el directorio correcto
         const cmd = `docker-compose -f ${path.join(networkDir, 'docker-compose.yml')} up -d`;
         // Ejecuta el comando
@@ -183,7 +194,7 @@ app.post('/crearRed', (req, res) => {
     } catch (error) {
         console.error(`Error al iniciar la red con chainId ${chainId}:`, error);
         res.status(500).send(`Error al iniciar la red con chainId ${chainId}.`);
-    }
+    }*/
     
 });
 
