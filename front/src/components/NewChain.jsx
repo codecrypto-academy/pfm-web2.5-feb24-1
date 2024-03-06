@@ -58,7 +58,9 @@ export function NewChain(){
                 <label className="form-style">Introduzca el número de red "ChainID"</label>
                 <input {...register('chainID')} type="number" className="form-control"></input>
             </div>
-            <button className="btn btn-primary mt-3">Añadir red</button>
+            <div className="d-flex justify-content-center">
+                <button className="btn btn-light custom-button mt-3">Añadir red</button>
+            </div>
         </form>
         {error && <h1 className="alert alert-danger" role="alert">{error}</h1>}
         {ok && <h1 className="alert alert-success" role="alert">{ok}</h1>}

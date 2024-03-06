@@ -17,7 +17,7 @@ Ir al navegador y acceder a http://localhost:5173
 4º Para enrutar, instalaremos las librerias:
 yarn add react-router-dom
 
-
+npm i bootstrap-icons
 
 
 ////////////////////////////////////////////

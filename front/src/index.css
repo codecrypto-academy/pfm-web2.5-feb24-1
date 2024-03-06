@@ -89,3 +89,7 @@
 .footer .social-icon:last-child {
     margin-right: 0;
 }
+
+.custom-button:hover {
+    background-color: #00FFFF;
+}

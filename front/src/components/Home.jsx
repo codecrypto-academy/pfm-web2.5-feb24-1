@@ -1,18 +1,41 @@
-
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom';
 
-
-
 export function Home() {
+    const [showButtons, setShowButtons] = useState({});
+    const node = useRef();
+
     const { data, isLoading, error } = useQuery("redes", () => {
-        // Cambia la URL a tu endpoint específico que devuelve las redes
         return fetch("http://localhost:5555/redes").then(res => res.json());
     });
 
-    if (isLoading) return <div>Cargando listado de redes...</div>;
+    useEffect(() => {
+        // Agrega un detector de clics al documento
+        document.addEventListener("mousedown", handleClick);
+        return () => {
+            // Limpia el detector de clics al desmontar
+            document.removeEventListener("mousedown", handleClick);
+        };
+    }, []);
+
+    const handleClick = e => {
+        if (node.current.contains(e.target)) {
+            // Dentro del clic, no hacemos nada
+            return;
+        }
+        // Fuera del clic, cierra el desplegable
+        setShowButtons({});
+    };
+
+    if (isLoading) return <div className="spinner-border" role="status">
+    <span className="visually-hidden">Loading...</span>
+  </div>
     if (error) return <div>Ocurrió un error al cargar las redes: {error.message}</div>;
+
+    const toggleButtons = (id) => {
+        setShowButtons(prevState => ({ ...prevState, [id]: !prevState[id] }));
+    }
 
     return (
         <div className="container mt-5">
@@ -25,6 +48,7 @@ export function Home() {
                         <th>Wallet Firmante</th>
                         <th>Descripción</th>
                         <th>Fecha de Creación</th>
+                        <th className="text-center">Opciones</th>
                     </tr>
                 </thead>
                 <tbody >
@@ -37,16 +61,39 @@ export function Home() {
                             <td>{red.WALLET_FIRMANTE}</td>
                             <td>{red.DESCRIPCION}</td>
                             <td>{new Date(red.FECHA_CREACION).toLocaleString()}</td>
+                            <td className="text-center">
+                                <div ref={node}>
+                                    <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.CHAIN_ID)}>
+                                        <span className="bi bi-gear"></span>
+                                    </button>
+                                    {showButtons[red.CHAIN_ID] && (
+                                        <div style={{ position: 'absolute',  backgroundColor: 'white' }}>
+                                            <button type="button" className="btn btn-light">Modificar Red</button>
+                                            <button type="button" className="btn btn-light">Eliminar Red</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </td>
                         </tr>
                     ))}
                 </tbody>
             </table>
+            <div className="d-flex justify-content-center">
+                <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href='http://localhost:5173/newchain'}>CREAR RED</button>
+            </div>
         </div>
     );
 }
 
 
-
+/*
+{showButtons && (
+                <div className="mt-3 text-center">
+                    <button type="button" className="btn btn-primary mr-2">Añadir Nodo</button>
+                    <button type="button" className="btn btn-primary mr-2">Borrar Nodo</button>
+                </div>
+            )}
+            */
 
 
 /*
