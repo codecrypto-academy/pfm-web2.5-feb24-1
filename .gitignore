@@ -27,3 +27,4 @@ back/yarn.lock
 back/yarn.lock
 back/package.json
 back/package-lock.json
+back/datos/networks/chain-1/data/geth.ipc
