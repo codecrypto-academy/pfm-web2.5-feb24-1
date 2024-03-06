@@ -28,6 +28,7 @@ function q(sql, parameters) {
         try {
             connection = await oracledb.getConnection();
             const result = await connection.execute(sql, parameters, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+            await connection.commit();
             resolve(result);
         } catch (err) {
             reject(err);

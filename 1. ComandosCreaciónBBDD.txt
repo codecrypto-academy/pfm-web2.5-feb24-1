@@ -7,7 +7,7 @@ host: 'localhost',
 port: 1521
 ServiceName: 'XE',
 user: 'system',
-password: 'my-secret-pw'
+password: 'manager'
 
 2. En General, para el campo "Nombre de conexión" poner "proyecto-nodo".
 

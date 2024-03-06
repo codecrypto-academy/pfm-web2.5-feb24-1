@@ -2,13 +2,13 @@ const {Web3} = require("web3")
 const {ethers} = require("ethers")
 const fs = require("fs")
 const path = require('path');
+const bodyParser = require('body-parser')
 const quote = require('shell-quote').quote;
 const express = require("express");
 const cors = require("cors");
 const db = require('./db');
 const { execSync } = require("child_process");
 const yaml = require('js-yaml');
-const bodyParser = require("body-parser")
 
 // Arreglado problema con los espacios
 //let pathNodo = path.join(__dirname, '../nodo').replace(/ /g, '\\ ');
@@ -21,6 +21,10 @@ const DIR_NETWORKS = path.join(DIR_BASE, 'networks');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json())
+
+
+// Middleware para el uso de body en peticiones
+app.use(bodyParser.json());
 
 // Inicialización de la base de datos antes de empezar a escuchar en el puerto
 db.init().then(() => {
@@ -47,6 +51,41 @@ app.get("/redes", async (req, res) => {
     }
 });
 
+app.post("/redes", async (req, res) => {
+    const datos = req.body;
+
+    const sql = `INSERT INTO C##NODO.redes (chain_id, nombre, wallet_firmante, descripcion) VALUES (:chainId, :nombre, :addressSigner, :descripcion)`;
+
+    const result = await db.q(sql, datos);
+    console.log('Red insertada con éxito');
+
+    res.status(201).send(result);
+});
+
+app.put("/redes/:chainId", async (req, res) => {
+    const chainId = req.params.chainId;
+    const datos = req.body;
+
+    const sql = `UPDATE C##NODO.redes SET nombre = :nombre, descripcion = :descripcion WHERE chain_id = ${chainId}`;
+
+    const result = await db.q(sql, datos);
+    console.log('Red modificada con éxito');
+
+    res.status(200).send(result);
+});
+
+app.delete("/redes/:chainId", async (req, res) => {
+    const chainId = req.params.chainId;
+
+    const sql = `DELETE FROM C##NODO.redes WHERE chain_id = ${chainId}`;
+
+    const result = await db.q(sql, []);
+    console.log('Red borrada con éxito');
+
+    res.status(204).send();
+});
+
+// Endpoint para levantar un nodo
 
 
 
@@ -191,7 +230,7 @@ app.post('/añadirNodo/:chainId', (req, res) => {
     }
 });
 
-// Endpoint para crear
+// Endpoint para levantar nodo
 /*
 app.get("/levantar", async (req, res) => {
     const cmd = `docker run --name proyecto-eth-nodo -v ${PATH_NODO}/password.txt:/password -p 8545:8545 \
@@ -206,7 +245,6 @@ app.get("/levantar", async (req, res) => {
     res.status(200).send("Nodo iniciado")
 });
 */
-
 
 
 
