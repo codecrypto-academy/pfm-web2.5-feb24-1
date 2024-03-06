@@ -2,6 +2,7 @@ const {Web3} = require("web3")
 const {ethers} = require("ethers")
 const fs = require("fs")
 const path = require('path');
+const bodyParser = require('body-parser')
 const quote = require('shell-quote').quote;
 
 //const web3 = new Web3("http://localhost:9999")
@@ -18,6 +19,10 @@ console.log(PATH_NODO);
 // Inicialización de la aplicación Express
 const app = express();
 app.use(cors());
+
+
+// Middleware para el uso de body en peticiones
+app.use(bodyParser.json());
 
 // Inicialización de la base de datos antes de empezar a escuchar en el puerto
 db.init().then(() => {
@@ -44,7 +49,41 @@ app.get("/redes", async (req, res) => {
     }
 });
 
-// Endpoint para crear
+app.post("/redes", async (req, res) => {
+    const datos = req.body;
+
+    const sql = `INSERT INTO C##NODO.redes (chain_id, nombre, wallet_firmante, descripcion) VALUES (:chainId, :nombre, :addressSigner, :descripcion)`;
+
+    const result = await db.q(sql, datos);
+    console.log('Red insertada con éxito');
+
+    res.status(201).send(result);
+});
+
+app.put("/redes/:chainId", async (req, res) => {
+    const chainId = req.params.chainId;
+    const datos = req.body;
+
+    const sql = `UPDATE C##NODO.redes SET nombre = :nombre, descripcion = :descripcion WHERE chain_id = ${chainId}`;
+
+    const result = await db.q(sql, datos);
+    console.log('Red modificada con éxito');
+
+    res.status(200).send(result);
+});
+
+app.delete("/redes/:chainId", async (req, res) => {
+    const chainId = req.params.chainId;
+
+    const sql = `DELETE FROM C##NODO.redes WHERE chain_id = ${chainId}`;
+
+    const result = await db.q(sql, []);
+    console.log('Red borrada con éxito');
+
+    res.status(204).send();
+});
+
+// Endpoint para levantar un nodo
 app.get("/levantar", async (req, res) => {
     const cmd = `docker run --name proyecto-eth-nodo -v ${PATH_NODO}/password.txt:/password -p 8545:8545 \
     -v ${PATH_NODO}/data:/data ethereum/client-go:latest --datadir /data --allow-insecure-unlock \
@@ -57,7 +96,6 @@ app.get("/levantar", async (req, res) => {
 
     res.status(200).send("Nodo iniciado")
 });
-
 
 /*
 const json = JSON.parse(fs.readFileSync("../nodo/data/keystore/UTC--2024-02-17T20-51-34.980090419Z--267d1477b48716439fec3fa1b0b1d40855db8aa1"))
