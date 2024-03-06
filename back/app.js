@@ -51,6 +51,7 @@ app.get("/redes", async (req, res) => {
     }
 });
 
+// Endpoint para insertar Redes en base de datos
 app.post("/redes", async (req, res) => {
     const datos = req.body;
 
@@ -62,6 +63,7 @@ app.post("/redes", async (req, res) => {
     res.status(201).send(result);
 });
 
+// Endpoint para modificar Redes en base de datos
 app.put("/redes/:chainId", async (req, res) => {
     const chainId = req.params.chainId;
     const datos = req.body;
@@ -74,10 +76,14 @@ app.put("/redes/:chainId", async (req, res) => {
     res.status(200).send(result);
 });
 
+// Endpoint para borrar Redes en base de datos
 app.delete("/redes/:chainId", async (req, res) => {
     const chainId = req.params.chainId;
 
+    //TODO: try-catch
+
     const sql = `DELETE FROM C##NODO.redes WHERE chain_id = ${chainId}`;
+    borrarNodosDeRed(chainId)
 
     const result = await db.q(sql, []);
     console.log('Red borrada con éxito');
@@ -85,9 +91,12 @@ app.delete("/redes/:chainId", async (req, res) => {
     res.status(204).send();
 });
 
-// Endpoint para levantar un nodo
+async function borrarNodosDeRed (chainId) {
+    const sql = `DELETE FROM C##NODO.nodos WHERE chain_id = ${chainId}`;
 
-
+    const result = await db.q(sql, []);
+    console.log(`Nodos de la red ${chainId} borrada con éxito`);
+}
 
 // Asegura la creación de directorios necesarios para almacenar los datos de la red
 function ensureDir(dir) {
@@ -230,8 +239,8 @@ app.post('/añadirNodo/:chainId', (req, res) => {
     }
 });
 
-// Endpoint para levantar nodo
 /*
+// Endpoint para levantar nodo
 app.get("/levantar", async (req, res) => {
     const cmd = `docker run --name proyecto-eth-nodo -v ${PATH_NODO}/password.txt:/password -p 8545:8545 \
     -v ${PATH_NODO}/data:/data ethereum/client-go:latest --datadir /data --allow-insecure-unlock \
