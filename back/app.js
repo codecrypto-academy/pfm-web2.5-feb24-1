@@ -56,9 +56,6 @@ function ensureDir(dir) {
         fs.mkdirSync(dir, { recursive: true });
         console.log("llega")
     }
-    console.log("No llega")
-        console.log(dir)
-    
 }
 
 // Genera y guarda un archivo de configuración de génesis basado en el chainId
@@ -130,8 +127,8 @@ app.post('/crearRed', (req, res) => {
         // Construye el comando para ejecutar docker-compose up en el directorio correcto
         const cmd = `docker-compose -f ${path.join(networkDir, 'docker-compose.yml')} up -d`;
         // Ejecuta el comando
-        //console.log(cmd)
-        execSync(cmd);
+        console.log(cmd)
+        execSync(cmd,  { shell: '/bin/bash' });
 
         console.log(`Red con chainId ${chainId} ha sido iniciada exitosamente.`);
         res.json({ message: `Red con chainId ${chainId} ha sido creada e iniciada exitosamente. `});
