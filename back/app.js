@@ -105,7 +105,7 @@ function ensureDir(dir) {
         console.log("llega")
     }
 }
-
+// TO DO change period to 4
 // Genera y guarda un archivo de configuración de génesis basado en el chainId
 function createGenesisFile(chainId, networkDir) {
     const genesisPath = path.join(networkDir, 'genesis.json');
@@ -128,17 +128,18 @@ function createGenesisFile(chainId, networkDir) {
         },
         "nonce": "0x0",
         "timestamp": "0x5e9d4d7c",
-        "extraData": "0x00",
+        "extraData": "0x00",//TO DO
         "gasLimit": "0x2fefd8",
         "difficulty": "0x1",
         "mixHash": "0x63746963616c636861696e2d686173682d67656e657369732d68617368",
         "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
-        "alloc": {},
+        "alloc": {},//TO DO AÑADIR CUENTAS CON SALDOS
     };
     fs.writeFileSync(genesisPath, JSON.stringify(genesis, null, 4));
 }
 
 // Crea y guarda un archivo Docker Compose para inicializar la red con el nodo especificado
+//TO DO, AÑADIR LA PARTE DEL GENESIS
 function createDockerComposeFile(chainId, networkDir) {
     const composePath = path.join(networkDir, 'docker-compose.yml');
     const composeContent = `
@@ -146,12 +147,12 @@ version: '3'
 services:
   node:
     image: ethereum/client-go:latest
-    command: --datadir /data --networkid ${chainId} --http --http.addr 0.0.0.0 --http.port 99999 --http.corsdomain "*" --http.api eth,web3,personal,net --allow-insecure-unlock --nodiscover
+    command: --datadir /data --networkid ${chainId} --http --http.addr 0.0.0.0 --http.port 4000 --http.corsdomain "*" --http.api eth,web3,personal,net --allow-insecure-unlock --nodiscover
     volumes:
       - ./data:/data
     ports:
-      - "99999:99999"
-      - "303003:303003"
+      - "4000:4000"
+      - "30303:30303"
 networks:
   default:
     name: eth-net-${chainId}
@@ -160,20 +161,23 @@ networks:
 }
 
 // Endpoint para crear una nueva red blockchain basada en Ethereum
-app.post('/crearRed', (req, res) => {
-    const { chainId } = req.body;
+app.post('/crearRed', async (req, res) => {
+    const { chainId, chainName, tipoNodo } = req.body;
+    console.log(tipoNodo)
     if (!chainId) {
         return res.status(400).send('El campo chainId es requerido.');
     }
-
+    console.log(chainId)
+    console.log(chainName)
+    console.log(tipoNodo)
     const networkDir = path.join(DIR_NETWORKS, `chain-${chainId}`);
     ensureDir(networkDir); // Asegura la existencia del directorio de la red
     createGenesisFile(chainId, networkDir); // Crea el archivo de génesis
     createDockerComposeFile(chainId, networkDir); // Crea el archivo Docker Compose
 
     const cmd = `docker-compose -f ${path.join(networkDir, 'docker-compose.yml')} up -d`;
-
-        execSync(cmd, { shell: 'powershell.exe' }, (error, stdout, stderr) => {
+    console.log(cmd)
+        execSync(cmd, (error, stdout, stderr) => {
             if (error) {
                 console.error(`Error al iniciar la red con chainId ${chainId}:`, error);
                 res.status(500).send(`Error al iniciar la red con chainId ${chainId}.`);
@@ -182,6 +186,13 @@ app.post('/crearRed', (req, res) => {
             console.log(`Red con chainId ${chainId} ha sido iniciada exitosamente.`);
             res.json({ message: `Red con chainId ${chainId} ha sido creada e iniciada exitosamente. `});
         });
+
+
+
+
+
+
+
     /*try {
         // Construye el comando para ejecutar docker-compose up en el directorio correcto
         const cmd = `docker-compose -f ${path.join(networkDir, 'docker-compose.yml')} up -d`;

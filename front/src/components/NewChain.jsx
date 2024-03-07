@@ -17,15 +17,24 @@ export function NewChain(){
     const [ok, setOk] = useState(null);
 
     //Creamos la funcion para añadir la red, será asincrona
-    async function createChain(){
-        const url = `http://localhost/levantar`
-        const response = await fetch(url)
+    async function createChain(data){
+    const url = `http://localhost:5555/crearRed`
+    const response = await fetch(url, {
+        method: 'POST', 
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data) 
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
     }
+}
 
     const onSubmit = async (data) =>{
         
         const chainID = data.chainID;
-        createChain(chainID)
+        createChain(data)
         //Comprobamos que el data llega desde el formulario
         //console.log(chainID)
 
@@ -55,8 +64,16 @@ export function NewChain(){
         
         <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group">
+                <label className="form-style">Introduzca el Nombre de la red</label>
+                <input {...register('chainName')} type="number" className="form-control"></input>
                 <label className="form-style">Introduzca el número de red "ChainID"</label>
                 <input {...register('chainID')} type="number" className="form-control"></input>
+                <label className="form-style">Introduzca el tipo de nodo</label><br></br>
+                <select {...register('tipoNodo')}>
+                    <option value="signer">Firmador</option>
+                    <option value="miner">Minador</option>
+                    <option value="rpc">RPC</option>
+                </select>
             </div>
             <div className="d-flex justify-content-center">
                 <button className="btn btn-light custom-button mt-3">Añadir red</button>

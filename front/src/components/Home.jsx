@@ -36,7 +36,7 @@ export function Home() {
     const toggleButtons = (id) => {
         setShowButtons(prevState => ({ ...prevState, [id]: !prevState[id] }));
     }
-
+    //TO DO STATUS DE LA RED
     return (
         <div className="container mt-5">
             <h2>Listado de Redes</h2>
