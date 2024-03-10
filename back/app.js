@@ -229,14 +229,56 @@ UNLOCK=${fs.readFileSync(`${pathNetwork}/address.txt`).toString().trim()}
 }
 
 function createCuentaBootnode(network, pathNetwork) {
+    console.log("createCuentaBootnode - 1")
+    const cmd = `docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root --entrypoint=geth ethereum/client-go:latest account new --password /root/password.txt --datadir /root > ${pathNetwork}/output.txt`
 
-    const cmd = `
-    docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:latest sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30- > /root/address.txt &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
- console.log(cmd)
+    console.log("createCuentaBootnode - 2")
+    console.log(cmd)
 
+    console.log("createCuentaBootnode - 3")
     execSync(cmd)
 
+    // Verifica si el archivo output.txt existe
+    const outputFilePath = `${pathNetwork}/output.txt`;
+    if (fs.existsSync(outputFilePath)) {
+        console.log(`El archivo ${outputFilePath} existe en el directorio.`);
+
+        // Lee el contenido del archivo
+        const fileContent = fs.readFileSync(outputFilePath, 'utf8');
+
+        // Extrae la dirección pública de la clave generada
+        const publicKeyMatch = fileContent.match(/Public address of the key:\s+(\S+)/);
+        if (publicKeyMatch) {
+            const publicKey = publicKeyMatch[1];
+            console.log(`Dirección pública de la clave generada: ${publicKey}`);
+            // Extrae solo el valor hexadecimal
+            /*const hexadecimalValue = publicKey.replace(/^0x/, '');
+            console.log(`Valor hexadecimal de la clave generada: ${hexadecimalValue}`);*/
+            
+            // Escribe el valor de publicKey en el archivo address.txt
+            const addressFilePath = `${pathNetwork}/address.txt`;
+            fs.writeFileSync(addressFilePath, publicKey);
+            console.log(`La dirección pública se ha guardado en ${addressFilePath}`);
+
+            // Ejecuta los siguientes comandos para bootnode
+            console.log("Ejecutando comandos para bootnode...");
+            const bootnodeCmd = `docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:latest bootnode -genkey /root/bootnode.key -writeaddress`;
+            execSync(bootnodeCmd);
+            console.log("Comandos para bootnode ejecutados con éxito.");
+            
+
+        } else {
+            console.error('No se pudo encontrar la dirección pública en el archivo.');
+        }
+
+
+
+    } else {
+        console.error(`El archivo ${outputFilePath} no existe en el directorio.`);
+    }
+    console.log("createCuentaBootnode - Salida")
 }
+
 
 app.get('/down/:id', async (req, res) => {
     const { id } = req.params
@@ -246,7 +288,7 @@ app.get('/down/:id', async (req, res) => {
     else {
         execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml down`)
         fs.rmdirSync(pathNetwork, { recursive: true })
-        res.send({id:id});
+        res.send({ id: id });
     }
 
 })
@@ -257,10 +299,10 @@ app.get('/up/:id', async (req, res) => {
 
     const network = networks.find(i => i.id == id)
     if (!network)
-    res.status(404).send('No se ha encontrado la red')
-else {
-    
-        console.log("up",network)
+        res.status(404).send('No se ha encontrado la red')
+    else {
+
+        console.log("up", network)
         const pathNetwork = path.join(DIR_NETWORKS, id)
 
         if (existsDir(path.join(DIR_BASE, 'networks', id)))
@@ -278,7 +320,7 @@ else {
         fs.writeFileSync(`${pathNetwork}/.env`, createEnv(network))
         console.log(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`)
         execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`)
-        
+
         res.send(network);
     }
 }
@@ -316,7 +358,7 @@ app.post('/', async (req, res) => {
     const network = req.body
     console.log(network)
     const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
-    if (networks.find(i => i.id == network.id)){
+    if (networks.find(i => i.id == network.id)) {
         console.log("Encuentra el ID lin-322")
         networks[networks.findIndex(i => i.id == network.id)] = network
         fs.writeFileSync('./datos/networks.json', JSON.stringify(networks, null, 4))
@@ -360,10 +402,10 @@ app.get('/faucet/:net/:account/:amount', async (req, res) => {
     const tx = await signer.sendTransaction({
         from: address,
         to: account,
-        value: ethers.parseUnits(amount,18)
+        value: ethers.parseUnits(amount, 18)
     });
     // devolvemos la transaccion
-    res.send({hash:tx});
+    res.send({ hash: tx });
 })
 
 app.get('/blocks/:net/', async (req, res) => {
@@ -392,7 +434,7 @@ app.get('/blocks/:net/', async (req, res) => {
     res.send(blocks);
 })
 app.get('/isAlive/:net/', async (req, res) => {
-    res.send({"ok":true})
+    res.send({ "ok": true })
 }
 )
 
@@ -417,11 +459,11 @@ app.get('/isAlive/:net/', async (req, res) => {
         );
         const blockNumber = await provider.getBlockNumber();
         console.log(blockNumber)
-        res.send({ alive: true , blockNumber})
+        res.send({ alive: true, blockNumber })
 
     } catch (error) {
         res.send({ alive: false })
     }
 
-    
+
 })
