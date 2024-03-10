@@ -262,7 +262,7 @@ function createCuentaBootnode(network, pathNetwork) {
 
             // Ejecuta los siguientes comandos para bootnode
             console.log("Ejecutando comandos para bootnode...");
-            const bootnodeCmd = `docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:latest bootnode -genkey /root/bootnode.key -writeaddress`;
+            const bootnodeCmd = `bootnode -genkey ${pathNetwork}/bootnode.key -writeaddress > ${pathNetwork}/bootnode`;
             execSync(bootnodeCmd);
             console.log("Comandos para bootnode ejecutados con éxito.");
             
