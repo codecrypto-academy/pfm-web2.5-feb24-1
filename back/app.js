@@ -231,11 +231,8 @@ UNLOCK=${fs.readFileSync(`${pathNetwork}/address.txt`).toString().trim()}
 function createCuentaBootnode(network, pathNetwork) {
 
     const cmd = `
-    docker run -e IP="@172.16.238.20:0?discport=30301" \
-    --rm -v ${pathNetwork}:/root ethereum/client-go:alltools-latest-arm64 \
-sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30-  \
-> /root/address.txt  \
- &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
+    docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:latest sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30- > /root/address.txt &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
+ console.log(cmd)
 
     execSync(cmd)
 
@@ -272,7 +269,8 @@ else {
         fs.mkdirSync(path.join(DIR_BASE, 'networks', id), { recursive: true })
 
         fs.writeFileSync(`${pathNetwork}/password.txt`, createPassword(network))
-
+        console.log(network)
+        console.log(pathNetwork)
         createCuentaBootnode(network, pathNetwork)
         fs.writeFileSync(`${pathNetwork}/genesis.json`, JSON.stringify(createGenesis(network), null, 4))
 
@@ -319,11 +317,13 @@ app.post('/', async (req, res) => {
     console.log(network)
     const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
     if (networks.find(i => i.id == network.id)){
+        console.log("Encuentra el ID lin-322")
         networks[networks.findIndex(i => i.id == network.id)] = network
         fs.writeFileSync('./datos/networks.json', JSON.stringify(networks, null, 4))
         res.send(network);
     }
     else {
+        console.log("NO Encuentra el ID lin-328")
         networks.push(network)
         fs.writeFileSync('./datos/networks.json', JSON.stringify(networks, null, 4))
         res.send(network);
