@@ -30,3 +30,4 @@ back/package-lock.json
 back/datos/
 back/datos/networks/chain-1/docker-compose.yml
 back/datos/networks/chain-1/genesis.json
+front/src/components/juanviejo.jsx
