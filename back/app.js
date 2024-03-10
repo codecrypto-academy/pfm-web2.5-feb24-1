@@ -83,7 +83,7 @@ function createGenesis(network) {
     return genesis;
 }
 function createPassword(network) {
-    return '12345678'
+    return 'PruebaPassword'
 }
 
 function createNodoMiner(nodo) {
