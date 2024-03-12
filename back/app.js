@@ -120,7 +120,11 @@ function createBootnode(network) {
     const bootnode = `
     geth-bootnode:
         hostname: geth-bootnode
+<<<<<<< HEAD
         image: ethereum/client-go:alltools-latest
+=======
+        image: ethereum/client-go:latest
+>>>>>>> 7db511f04b28eb4bb7065139ca94e93b8ec50fa3
         command: 'bootnode     --addr \${IPBOOTNODE}:30301 
             --netrestrict=\${SUBNET} 
             --nodekey=/pepe/bootnode.key'
