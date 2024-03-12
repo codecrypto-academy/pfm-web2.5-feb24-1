@@ -120,7 +120,7 @@ function createBootnode(network) {
     const bootnode = `
     geth-bootnode:
         hostname: geth-bootnode
-        image: ethereum/client-go:alltools-latest-arm64
+        image: ethereum/client-go:alltools-latest
         command: 'bootnode     --addr \${IPBOOTNODE}:30301 
             --netrestrict=\${SUBNET} 
             --nodekey=/pepe/bootnode.key'
@@ -230,53 +230,17 @@ UNLOCK=${fs.readFileSync(`${pathNetwork}/address.txt`).toString().trim()}
 
 function createCuentaBootnode(network, pathNetwork) {
     console.log("createCuentaBootnode - 1")
-    const cmd = `docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root --entrypoint=geth ethereum/client-go:latest account new --password /root/password.txt --datadir /root > ${pathNetwork}/output.txt`
-
+    //const cmd = `docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root --entrypoint=geth ethereum/client-go:latest account new --password /root/password.txt --datadir /root > ${pathNetwork}/output.txt`
+    const cmd= `docker run -e IP="@192.168.50.110:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:alltools-latest sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30- > /root/address.txt &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
+    //docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v .:/root ethereum/client-go:latest sh -c 'geth account new --password /root/password.txt --datadir /root'
     console.log("createCuentaBootnode - 2")
-    console.log(cmd)
+    //console.log(cmd)
 
     console.log("createCuentaBootnode - 3")
     execSync(cmd)
 
     // Verifica si el archivo output.txt existe
-    const outputFilePath = `${pathNetwork}/output.txt`;
-    if (fs.existsSync(outputFilePath)) {
-        console.log(`El archivo ${outputFilePath} existe en el directorio.`);
 
-        // Lee el contenido del archivo
-        const fileContent = fs.readFileSync(outputFilePath, 'utf8');
-
-        // Extrae la dirección pública de la clave generada
-        const publicKeyMatch = fileContent.match(/Public address of the key:\s+(\S+)/);
-        if (publicKeyMatch) {
-            const publicKey = publicKeyMatch[1];
-            console.log(`Dirección pública de la clave generada: ${publicKey}`);
-            // Extrae solo el valor hexadecimal
-            /*const hexadecimalValue = publicKey.replace(/^0x/, '');
-            console.log(`Valor hexadecimal de la clave generada: ${hexadecimalValue}`);*/
-            
-            // Escribe el valor de publicKey en el archivo address.txt
-            const addressFilePath = `${pathNetwork}/address.txt`;
-            fs.writeFileSync(addressFilePath, publicKey);
-            console.log(`La dirección pública se ha guardado en ${addressFilePath}`);
-
-            // Ejecuta los siguientes comandos para bootnode
-            console.log("Ejecutando comandos para bootnode...");
-            const bootnodeCmd = `bootnode -genkey ${pathNetwork}/bootnode.key -writeaddress > ${pathNetwork}/bootnode`;
-            execSync(bootnodeCmd);
-            console.log("Comandos para bootnode ejecutados con éxito.");
-            
-
-        } else {
-            console.error('No se pudo encontrar la dirección pública en el archivo.');
-        }
-
-
-
-    } else {
-        console.error(`El archivo ${outputFilePath} no existe en el directorio.`);
-    }
-    console.log("createCuentaBootnode - Salida")
 }
 
 

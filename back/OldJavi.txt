@@ -1,0 +1,38 @@
+    const outputFilePath = `${pathNetwork}/output.txt`;
+    if (fs.existsSync(outputFilePath)) {
+        console.log(`El archivo ${outputFilePath} existe en el directorio.`);
+
+        // Lee el contenido del archivo
+        const fileContent = fs.readFileSync(outputFilePath, 'utf8');
+
+        // Extrae la dirección pública de la clave generada
+        const publicKeyMatch = fileContent.match(/Public address of the key:\s+(\S+)/);
+        if (publicKeyMatch) {
+            const publicKey = publicKeyMatch[1];
+            console.log(`Dirección pública de la clave generada: ${publicKey}`);
+            // Extrae solo el valor hexadecimal
+            /*const hexadecimalValue = publicKey.replace(/^0x/, '');
+            console.log(`Valor hexadecimal de la clave generada: ${hexadecimalValue}`);*/
+            
+            // Escribe el valor de publicKey en el archivo address.txt
+            const addressFilePath = `${pathNetwork}/address.txt`;
+            fs.writeFileSync(addressFilePath, publicKey);
+            console.log(`La dirección pública se ha guardado en ${addressFilePath}`);
+
+            // Ejecuta los siguientes comandos para bootnode
+            console.log("Ejecutando comandos para bootnode...");
+            const bootnodeCmd = `bootnode -genkey ${pathNetwork}/bootnode.key -writeaddress > ${pathNetwork}/bootnode`;
+            execSync(bootnodeCmd);
+            console.log("Comandos para bootnode ejecutados con éxito.");
+            
+
+        } else {
+            console.error('No se pudo encontrar la dirección pública en el archivo.');
+        }
+
+
+
+    } else {
+        console.error(`El archivo ${outputFilePath} no existe en el directorio.`);
+    }
+    console.log("createCuentaBootnode - Salida")
