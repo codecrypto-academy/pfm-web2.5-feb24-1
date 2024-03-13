@@ -237,7 +237,6 @@ function createCuentaBootnode(network, pathNetwork) {
     execSync(cmd)
 }
 
-
 app.get('/down/:id', async (req, res) => {
     const { id } = req.params
     const pathNetwork = path.join(DIR_NETWORKS, id)
@@ -438,14 +437,4 @@ function initialize(){
 
 }
 
-app.get('/redes', (req, res) => {
-    try {
-        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
-        const data = fs.readFileSync('./datos/networks.json', 'utf8');
-        const redes = JSON.parse(networks);
-        res.send(networks);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Ha ocurrido un error al leer el archivo JSON');
-    }
-});
+

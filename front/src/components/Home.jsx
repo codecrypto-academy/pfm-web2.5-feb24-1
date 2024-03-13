@@ -7,7 +7,7 @@ export function Home() {
     const node = useRef();
 
     const { data, isLoading, error } = useQuery("redes", () => {
-        return fetch("http://localhost:3000/redes").then(res => res.json());
+        return fetch("http://localhost:3000/").then(res => res.json());
     });
 
     useEffect(() => {
@@ -53,10 +53,10 @@ export function Home() {
                 </thead>
                 <tbody >
                     {data.map((red) => (
-                        <tr key={red.CHAIN_ID}>
-                            <td>{red.CHAIN_ID}</td>
+                        <tr key={red.chainId}>
+                            <td>{red.chainId}</td>
                             <td>
-                                <Link to={`/redes/${red.CHAIN_ID}`}>{red.NOMBRE}</Link>
+                                <Link to={`/redes/${red.chainId}`}>{red.id}</Link>
                             </td>
                             <td>{red.WALLET_FIRMANTE}</td>
                             <td>{red.DESCRIPCION}</td>
