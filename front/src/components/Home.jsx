@@ -7,7 +7,7 @@ export function Home() {
     const node = useRef();
 
     const { data, isLoading, error } = useQuery("redes", () => {
-        return fetch("http://localhost:5555/redes").then(res => res.json());
+        return fetch("http://localhost:3000/redes").then(res => res.json());
     });
 
     useEffect(() => {

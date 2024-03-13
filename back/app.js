@@ -12,7 +12,11 @@ app.listen(3000, () => console.log('Listening on port 3000'));
 app.use(cors());
 app.use(express.json());
 
-const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+try {
+    const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+} catch (error) {
+    console.log(error)
+}
 DIR_BASE = path.join(__dirname, 'datos')
 DIR_NETWORKS = path.join(DIR_BASE, 'networks')
 
@@ -229,18 +233,8 @@ UNLOCK=${fs.readFileSync(`${pathNetwork}/address.txt`).toString().trim()}
 }
 
 function createCuentaBootnode(network, pathNetwork) {
-    console.log("createCuentaBootnode - 1")
-    //const cmd = `docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v ${pathNetwork}:/root --entrypoint=geth ethereum/client-go:latest account new --password /root/password.txt --datadir /root > ${pathNetwork}/output.txt`
     const cmd= `docker run -e IP="@192.168.50.110:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:alltools-latest sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30- > /root/address.txt &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
-    //docker run -e IP="@172.16.238.20:0?discport=30301" --rm -v .:/root ethereum/client-go:latest sh -c 'geth account new --password /root/password.txt --datadir /root'
-    console.log("createCuentaBootnode - 2")
-    //console.log(cmd)
-
-    console.log("createCuentaBootnode - 3")
     execSync(cmd)
-
-    // Verifica si el archivo output.txt existe
-
 }
 
 
@@ -259,7 +253,11 @@ app.get('/down/:id', async (req, res) => {
 
 app.get('/up/:id', async (req, res) => {
     const { id } = req.params
-    const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+    try {
+        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+    } catch (error) {
+        console.log(error)
+    }
 
     const network = networks.find(i => i.id == id)
     if (!network)
@@ -431,3 +429,23 @@ app.get('/isAlive/:net/', async (req, res) => {
 
 
 })
+
+function initialize(){
+    //Creamos red nadamas lanzar la app con ID 111
+
+    //Escrivimos en networks.json
+
+
+}
+
+app.get('/redes', (req, res) => {
+    try {
+        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+        const data = fs.readFileSync('./datos/networks.json', 'utf8');
+        const redes = JSON.parse(networks);
+        res.send(networks);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Ha ocurrido un error al leer el archivo JSON');
+    }
+});
