@@ -38,6 +38,7 @@ export function Home() {
     }
     //TO DO STATUS DE LA RED
     return (
+        
         <div className="container mt-5">
             <h2>Listado de Redes</h2>
             <table className="table table-striped">
@@ -52,41 +53,32 @@ export function Home() {
                     </tr>
                 </thead>
                 <tbody >
-                    {data.map((red) => {
-                        const [status, setStatus] = useState(null);
-
-                        useEffect(() => {
-                            fetch(`http://localhost:3000/status/${red.id}`)
-                                .then(response => response.json())
-                                .then(data => setStatus(data.status))
-                                .catch(error => console.error('Error:', error));
-                        }, [red.id]);
-
-                        return (
-                            <tr key={red.chainId}>
-                                <td>{red.chainId}</td>
-                                <td>
-                                    <Link to={`/redes/${red.chainId}`}>{red.id}</Link>
-                                </td>
-                                <td>{red.subnet}</td>
-                                <td>{status}</td>
-                                <td>{red.nodos.length}</td>
-                                <td className="text-center">
-                                    <div ref={node}>
-                                        <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.CHAIN_ID)}>
-                                            <span className="bi bi-gear"></span>
-                                        </button>
-                                        {showButtons[red.chainId] && (
-                                            <div style={{ position: 'absolute',  backgroundColor: 'white' }}>
-                                                <button type="button" className="btn btn-light">Modificar Red</button>
-                                                <button type="button" className="btn btn-light">Eliminar Red</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </td>
-                            </tr>
-                        );
-                    })}
+                    {data.map((red) => (
+                        <tr key={red.chainId}>
+                            <td>{red.chainId}</td>
+                            <td>
+                                <Link to={`/redes/${red.chainId}`}>{red.id}</Link>
+                            </td>
+                            <td>{red.subnet}</td>
+                            <td>
+                              
+                            </td>
+                            <td>{red.nodos.length}</td>
+                            <td className="text-center">
+                                <div ref={node}>
+                                    <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.CHAIN_ID)}>
+                                        <span className="bi bi-gear"></span>
+                                    </button>
+                                    {showButtons[red.chainId] && (
+                                        <div style={{ position: 'absolute',  backgroundColor: 'white' }}>
+                                            <button type="button" className="btn btn-light">Modificar Red</button>
+                                            <button type="button" className="btn btn-light">Eliminar Red</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
             <div className="d-flex justify-content-center">
@@ -95,6 +87,20 @@ export function Home() {
         </div>
     );
 }
+/*
+/*
+{data.map((red) => {
+                        
+                        useEffect(() => {
+                            fetch(`http://localhost:3000/status/${red.id}`)
+                                .then(response => response.json())
+                                .then(data => setStatus(data.status))
+                                .catch(error => console.error('Error:', error));
+                        }, [red.id]);
+
+*/
+
+
 
 /*
 {showButtons && (
