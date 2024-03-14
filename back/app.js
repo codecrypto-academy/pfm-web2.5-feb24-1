@@ -8,7 +8,7 @@ const { execSync, exec } = require("child_process");
 const port = 3000;
 
 app.listen(3000, () => console.log('Listening on port 3000'));
-
+/////////INICIAR CON npx nodemon --ignore "**/datos/**" .\app.js
 app.use(cors());
 app.use(express.json());
 
@@ -286,8 +286,25 @@ app.get('/up/:id', async (req, res) => {
     } catch (error) {
         console.log(error)
     }
-}
-);
+})
+
+app.get('/status/:id', async (req, res) => {
+    const { id } = req.params;
+    const cmd = `docker ps -f "name=${id}" -q`;
+    exec(cmd, (error, stdout, stderr) => {
+
+        if (error) {
+            console.error(`Error ejecutando el comando: ${error}`);
+            return;
+        }
+
+        if (stdout.trim()) {
+            return res.send({ status: "UP" })
+        } else {
+            return res.send({ status: "DOWN" })
+        }
+    });
+})
 
 app.get('/restart/:id', async (req, res) => {
     const { id } = req.params
@@ -335,13 +352,13 @@ app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
 
         // Eliminar el nodo de la red.
         networks[networkIndex].nodos.splice(nodeIndex, 1);
-        
+
         // Guardar los cambios en el archivo networks.json.
         fs.writeFileSync(path.join(DIR_BASE, 'networks.json'), JSON.stringify(networks, null, 4));
 
         // Ubicación del directorio de la red.
         const pathNetwork = path.join(DIR_NETWORKS, networkId);
-        
+
         // Asegurarse de que el directorio de la red existe antes de intentar reiniciar.
         if (existsDir(pathNetwork)) {
             // Bajar la red.
@@ -522,9 +539,9 @@ app.get('/isAlive/:net/', async (req, res) => {
 })
 
 function initialize() {
-    //Creamos red nadamas lanzar la app con ID 111
+    //Creamos red nada mas lanzar la app con ID 111
 
-    //Escrivimos en networks.json
+    //Escribimos en networks.json
 
 
 }

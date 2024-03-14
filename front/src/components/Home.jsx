@@ -29,8 +29,8 @@ export function Home() {
     };
 
     if (isLoading) return <div className="spinner-border" role="status">
-    <span className="visually-hidden">Loading...</span>
-  </div>
+        <span className="visually-hidden">Loading...</span>
+    </div>
     if (error) return <div>Ocurrió un error al cargar las redes: {error.message}</div>;
 
     const toggleButtons = (id) => {
@@ -38,6 +38,7 @@ export function Home() {
     }
     //TO DO STATUS DE LA RED
     return (
+
         <div className="container mt-5">
             <h2>Listado de Redes</h2>
             <table className="table table-striped">
@@ -45,9 +46,9 @@ export function Home() {
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Wallet Firmante</th>
-                        <th>Descripción</th>
-                        <th>Fecha de Creación</th>
+                        <th>IP</th>
+                        <th>Status</th>
+                        <th>Numero de nodos</th>
                         <th className="text-center">Opciones</th>
                     </tr>
                 </thead>
@@ -58,16 +59,18 @@ export function Home() {
                             <td>
                                 <Link to={`/redes/${red.chainId}`}>{red.id}</Link>
                             </td>
-                            <td>{red.WALLET_FIRMANTE}</td>
-                            <td>{red.DESCRIPCION}</td>
-                            <td>{new Date(red.FECHA_CREACION).toLocaleString()}</td>
+                            <td>{red.subnet}</td>
+                            <td>
+
+                            </td>
+                            <td>{red.nodos.length}</td>
                             <td className="text-center">
                                 <div ref={node}>
                                     <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.CHAIN_ID)}>
                                         <span className="bi bi-gear"></span>
                                     </button>
-                                    {showButtons[red.CHAIN_ID] && (
-                                        <div style={{ position: 'absolute',  backgroundColor: 'white' }}>
+                                    {showButtons[red.chainId] && (
+                                        <div style={{ position: 'absolute', backgroundColor: 'white' }}>
                                             <button type="button" className="btn btn-light">Modificar Red</button>
                                             <button type="button" className="btn btn-light">Eliminar Red</button>
                                         </div>
@@ -79,11 +82,24 @@ export function Home() {
                 </tbody>
             </table>
             <div className="d-flex justify-content-center">
-                <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href='http://localhost:5173/newchain'}>CREAR RED</button>
+                <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href = 'http://localhost:5173/newchain'}>CREAR RED</button>
             </div>
         </div>
     );
 }
+/*
+/*
+{data.map((red) => {
+                        
+                        useEffect(() => {
+                            fetch(`http://localhost:3000/status/${red.id}`)
+                                .then(response => response.json())
+                                .then(data => setStatus(data.status))
+                                .catch(error => console.error('Error:', error));
+                        }, [red.id]);
+
+*/
+
 
 
 /*
