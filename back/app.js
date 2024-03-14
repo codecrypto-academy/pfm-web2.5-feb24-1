@@ -86,6 +86,7 @@ function createGenesis(network) {
     genesis.extradata = "0x" + "0".repeat(64) + cuenta.trim() + "0".repeat(130)
     return genesis;
 }
+
 function createPassword(network) {
     return 'PruebaPassword'
 }
@@ -233,11 +234,11 @@ UNLOCK=${fs.readFileSync(`${pathNetwork}/address.txt`).toString().trim()}
 }
 
 function createCuentaBootnode(network, pathNetwork) {
-    const cmd= `docker run -e IP="@192.168.50.110:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:alltools-latest sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30- > /root/address.txt &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
+    const cmd = `docker run -e IP="@192.168.50.110:0?discport=30301" --rm -v ${pathNetwork}:/root ethereum/client-go:alltools-latest sh -c "geth account new --password /root/password.txt --datadir /root | grep 'of the key' | cut -c30- > /root/address.txt &&  bootnode -genkey /root/bootnode.key -writeaddress > /root/bootnode"`
     execSync(cmd)
 }
 
-app.get('/down/:id', async (req, res) => {
+app.get('/removeNetwork/:id', async (req, res) => {
     const { id } = req.params
     const pathNetwork = path.join(DIR_NETWORKS, id)
     if (!existsDir(pathNetwork))
@@ -247,42 +248,43 @@ app.get('/down/:id', async (req, res) => {
         fs.rmdirSync(pathNetwork, { recursive: true })
         res.send({ id: id });
     }
-
 })
 
 app.get('/up/:id', async (req, res) => {
     const { id } = req.params
+    var networks = null
     try {
-        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+        networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+
+
+        const network = networks.find(i => i.id == id)
+        if (!network)
+            res.status(404).send('No se ha encontrado la red')
+        else {
+
+            console.log("up", network)
+            const pathNetwork = path.join(DIR_NETWORKS, id)
+
+            if (existsDir(path.join(DIR_BASE, 'networks', id)))
+                fs.rmdirSync(path.join(DIR_BASE, 'networks', id), { recursive: true })
+
+            fs.mkdirSync(path.join(DIR_BASE, 'networks', id), { recursive: true })
+
+            fs.writeFileSync(`${pathNetwork}/password.txt`, createPassword(network))
+            console.log(network)
+            console.log(pathNetwork)
+            createCuentaBootnode(network, pathNetwork)
+            fs.writeFileSync(`${pathNetwork}/genesis.json`, JSON.stringify(createGenesis(network), null, 4))
+
+            fs.writeFileSync(`${pathNetwork}/docker-compose.yml`, createDockerCompose(network))
+            fs.writeFileSync(`${pathNetwork}/.env`, createEnv(network))
+            console.log(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`)
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`)
+
+            res.send(network);
+        }
     } catch (error) {
         console.log(error)
-    }
-
-    const network = networks.find(i => i.id == id)
-    if (!network)
-        res.status(404).send('No se ha encontrado la red')
-    else {
-
-        console.log("up", network)
-        const pathNetwork = path.join(DIR_NETWORKS, id)
-
-        if (existsDir(path.join(DIR_BASE, 'networks', id)))
-            fs.rmdirSync(path.join(DIR_BASE, 'networks', id), { recursive: true })
-
-        fs.mkdirSync(path.join(DIR_BASE, 'networks', id), { recursive: true })
-
-        fs.writeFileSync(`${pathNetwork}/password.txt`, createPassword(network))
-        console.log(network)
-        console.log(pathNetwork)
-        createCuentaBootnode(network, pathNetwork)
-        fs.writeFileSync(`${pathNetwork}/genesis.json`, JSON.stringify(createGenesis(network), null, 4))
-
-        fs.writeFileSync(`${pathNetwork}/docker-compose.yml`, createDockerCompose(network))
-        fs.writeFileSync(`${pathNetwork}/.env`, createEnv(network))
-        console.log(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`)
-        execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`)
-
-        res.send(network);
     }
 }
 );
@@ -313,6 +315,96 @@ app.get('/:id', async (req, res) => {
         res.send(network);
 }
 );
+
+app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
+    const { networkId, nodeName } = req.params;
+
+    try {
+        let networks = JSON.parse(fs.readFileSync(path.join(DIR_BASE, 'networks.json'), 'utf8'));
+        const networkIndex = networks.findIndex(network => network.id === networkId);
+
+        if (networkIndex === -1) {
+            return res.status(404).send('Red no encontrada.');
+        }
+
+        const nodeIndex = networks[networkIndex].nodos.findIndex(node => node.name === nodeName);
+
+        if (nodeIndex === -1) {
+            return res.status(404).send('Nodo no encontrado.');
+        }
+
+        // Eliminar el nodo de la red.
+        networks[networkIndex].nodos.splice(nodeIndex, 1);
+        
+        // Guardar los cambios en el archivo networks.json.
+        fs.writeFileSync(path.join(DIR_BASE, 'networks.json'), JSON.stringify(networks, null, 4));
+
+        // Ubicación del directorio de la red.
+        const pathNetwork = path.join(DIR_NETWORKS, networkId);
+        
+        // Asegurarse de que el directorio de la red existe antes de intentar reiniciar.
+        if (existsDir(pathNetwork)) {
+            // Bajar la red.
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml down`);
+
+            // Reiniciar la red.
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`);
+            res.send({ message: 'Nodo eliminado con éxito y red reiniciada.' });
+        } else {
+            res.status(404).send('Directorio de la red no encontrado.');
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al eliminar el nodo.');
+    }
+});
+
+
+app.post('/network/:networkId/node', async (req, res) => {
+    const { networkId } = req.params;
+    const newNodeDetails = req.body; // Aquí esperamos recibir los detalles del nuevo nodo
+
+    try {
+        let networks = JSON.parse(fs.readFileSync(path.join(DIR_BASE, 'networks.json'), 'utf8'));
+
+        // Buscar la red específica por ID
+        const networkIndex = networks.findIndex(network => network.id === networkId);
+        if (networkIndex === -1) {
+            return res.status(404).send('Red no encontrada.');
+        }
+
+        // Validar los detalles del nuevo nodo (esto depende de tus requerimientos específicos)
+        if (!newNodeDetails.type || !newNodeDetails.name || !newNodeDetails.ip) {
+            return res.status(400).send('Faltan detalles necesarios para crear el nodo.');
+        }
+
+        // Opcionalmente, validar que el nombre del nodo no esté duplicado en la red
+        const isDuplicateName = networks[networkIndex].nodos.some(node => node.name === newNodeDetails.name);
+        if (isDuplicateName) {
+            return res.status(400).send('El nombre del nodo ya existe en la red.');
+        }
+
+        // Añadir el nuevo nodo a la configuración de la red
+        networks[networkIndex].nodos.push({
+            type: newNodeDetails.type,
+            name: newNodeDetails.name,
+            ip: newNodeDetails.ip,
+            port: newNodeDetails.port || "" // El puerto puede ser opcional dependiendo del tipo de nodo
+        });
+
+        // Guardar los cambios en el archivo networks.json
+        fs.writeFileSync(path.join(DIR_BASE, 'networks.json'), JSON.stringify(networks, null, 4));
+
+        // Aquí puedes añadir lógica adicional para actualizar los archivos de configuración, 
+        // generar archivos de genesis (si es necesario), y arrancar el nodo en Docker.
+
+        res.send({ message: 'Nodo creado con éxito.' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error al crear el nodo.');
+    }
+});
+
 
 // para cuando existe y para cuando no existe
 app.post('/', async (req, res) => {
@@ -429,7 +521,7 @@ app.get('/isAlive/:net/', async (req, res) => {
 
 })
 
-function initialize(){
+function initialize() {
     //Creamos red nadamas lanzar la app con ID 111
 
     //Escrivimos en networks.json
