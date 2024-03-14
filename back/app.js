@@ -283,10 +283,26 @@ app.get('/up/:id', async (req, res) => {
     } catch (error) {
         console.log(error)
     }
-
-    
 }
 );
+
+app.get('/status/:id', async (req, res)=>{
+    const { id } = req.params;
+    const cmd = `docker ps -f "name=${id}" -q`;
+    exec(cmd, (error, stdout, stderr) => {
+        
+        if (error) {
+            console.error(`Error ejecutando el comando: ${error}`);
+            return;
+        }
+    
+        if (stdout.trim()) {
+            return res.send({status: "UP"})
+        } else {
+            return res.send({status: "DOWN"})
+        }
+    });
+})
 
 app.get('/restart/:id', async (req, res) => {
     const { id } = req.params
