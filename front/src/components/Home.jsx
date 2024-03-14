@@ -53,7 +53,7 @@ export function Home() {
                 </thead>
                 <tbody >
                     {data.map((red) => {
-                        const [status, setStatus] = useState('');
+                        const [status, setStatus] = useState(null);
 
                         useEffect(() => {
                             fetch(`http://localhost:3000/status/${red.id}`)
