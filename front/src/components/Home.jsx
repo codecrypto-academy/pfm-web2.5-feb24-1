@@ -45,7 +45,7 @@ export function Home() {
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Wallet Firmante</th>
+                        <th>IP</th>
                         <th>Descripción</th>
                         <th>Fecha de Creación</th>
                         <th className="text-center">Opciones</th>

@@ -8,7 +8,7 @@ const { execSync, exec } = require("child_process");
 const port = 3000;
 
 app.listen(3000, () => console.log('Listening on port 3000'));
-
+/////////INICIAR CON npx nodemon --ignore "**/datos/**" .\app.js
 app.use(cors());
 app.use(express.json());
 
@@ -254,15 +254,10 @@ app.get('/up/:id', async (req, res) => {
     const { id } = req.params
     try {
         const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
-    } catch (error) {
-        console.log(error)
-    }
-
-    const network = networks.find(i => i.id == id)
+        const network = networks.find(i => i.id == id)
     if (!network)
         res.status(404).send('No se ha encontrado la red')
     else {
-
         console.log("up", network)
         const pathNetwork = path.join(DIR_NETWORKS, id)
 
@@ -284,6 +279,12 @@ app.get('/up/:id', async (req, res) => {
 
         res.send(network);
     }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+    
 }
 );
 
