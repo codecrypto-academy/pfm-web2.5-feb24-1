@@ -13,6 +13,8 @@ export function NewChain() {
   const params = useParams();
   const [network, setNetwork] = useState(null);
   let id = params.id;
+
+  
   useEffect(() => {
     if (id) {
       fetch(`http://localhost:3000/${id}`).then((response) => {

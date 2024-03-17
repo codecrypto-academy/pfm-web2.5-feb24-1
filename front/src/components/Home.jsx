@@ -17,7 +17,13 @@ export function Home() {
         const data = await response.json();
         return data.status;
     }
-    
+
+    function mostrarMensaje(mensaje, exito) {
+        // Crea un pop-up con el mensaje proporcionado
+        const tipo = exito ? 'success' : 'error';
+        alert(`${mensaje} (${tipo})`);
+    }
+
     useEffect(() => {
         if (data) {
             setIsLoading2(true);
@@ -29,7 +35,7 @@ export function Home() {
                     setError(err.message);
                 }
             }))
-            .finally(() => setIsLoading2(false));
+                .finally(() => setIsLoading2(false));
         }
     }, [data]);
 
@@ -62,11 +68,33 @@ export function Home() {
 
     async function lanzarRed(id) {
         await fetch(`http://localhost:3000/up/${id}`);
-    window.location.reload();
+        window.location.reload();
     }
     function pararRed(id) {
         return fetch(`http://localhost:3000/up/${id}`)
     }
+    function eliminarRed(id) {
+        const url = `http://localhost:3000/network/${id}`;
+
+        // Realiza la solicitud DELETE
+        fetch(url, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Red eliminada con éxito
+                    mostrarMensaje('Se ha eliminado la red.', true);
+                } else {
+                    // Error al eliminar la red
+                    mostrarMensaje('No se ha eliminado la red.', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+                mostrarMensaje('Error al eliminar la red.', false);
+            });
+    }
+
 
     //TO DO STATUS DE LA RED
     return (
@@ -95,17 +123,17 @@ export function Home() {
                             </td>
                             <td>{red.subnet}</td>
                             <td className={`bi bi-activity ${status[red.id] === 'UP' ? 'neon' : ''}`}>
-                            
+
                             </td>
                             <td>{red.nodos.length}</td>
                             <td>
                                 <button type="button" className="btn btn-light custom-button" onClick={() => lanzarRed(red.id)}>
-                                            <span className="bi bi-play-fill"></span>
+                                    <span className="bi bi-play-fill"></span>
                                 </button>
                             </td>
                             <td>
                                 <button type="button" className="btn btn-light custom-button" onClick={() => pararRed(red.id)}>
-                                            <span className="bi bi-stop-fill"></span>
+                                    <span className="bi bi-stop-fill"></span>
                                 </button>
                             </td>
                             <td className="text-center">
@@ -116,7 +144,13 @@ export function Home() {
                                     {showButtons[red.chainId] && (
                                         <div style={{ position: 'absolute', backgroundColor: 'white' }}>
                                             <button type="button" className="btn btn-light">Modificar Red</button>
-                                            <button type="button" className="btn btn-light">Eliminar Red</button>
+                                            <button
+                                                type="button"
+                                                className="btn btn-light"
+                                                onClick={() => eliminarRed(red.id)}
+                                            >
+                                                Eliminar Red
+                                            </button>
                                         </div>
                                     )}
                                 </div>
@@ -129,7 +163,7 @@ export function Home() {
                 <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href = 'http://localhost:5173/newchain'}>CREAR RED</button>
             </div>
         </div>
-        
+
     );
 }
 

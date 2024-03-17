@@ -290,7 +290,7 @@ app.get('/ethereumBlocks', async (req, res) => {
 app.delete('/network/:id', async (req, res) => {
     const { id } = req.params;
     const pathNetwork = path.join(DIR_NETWORKS, id);
-
+    console.log("llega")
     try {
         // Verificar si Docker está corriendo
         try {
@@ -300,7 +300,7 @@ app.delete('/network/:id', async (req, res) => {
         }
 
         if (!existsDir(pathNetwork)) {
-            return res.status(404).send('No se ha encontrado la red');
+            return res.status(404).send('No se ha encontrado la red en el directorio');
         }
 
         // Detener y eliminar los contenedores Docker de la red
