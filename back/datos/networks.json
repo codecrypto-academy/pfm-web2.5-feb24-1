@@ -85,11 +85,45 @@
     {
         "id": "333",
         "chainId": 0,
-        "subnet": "192.168.70.50",
+        "subnet": "192.168.70.50/24",
         "ipBootnode": "192.168.70.55",
         "alloc": [
             "C077193960479a5e769f27B1ce41469C89Bec299",
             ""
+        ],
+        "nodos": [
+            {
+                "type": "",
+                "name": "",
+                "ip": "",
+                "port": 0
+            }
+        ]
+    },
+    {
+        "id": "sergi",
+        "chainId": "808",
+        "subnet": "192.168.80.0/24",
+        "ipBootnode": "192.168.80.3",
+        "alloc": [
+            "C077193960479a5e769f27B1ce41469C89Bec299"
+        ],
+        "nodos": [
+            {
+                "type": "rpc",
+                "name": "test1",
+                "ip": "192.168.80.20",
+                "port": 0
+            }
+        ]
+    },
+    {
+        "id": "sergi2",
+        "chainId": "2345567",
+        "subnet": "192.168.15.0/24",
+        "ipBootnode": "192.168.15.2",
+        "alloc": [
+            "C077193960479a5e769f27B1ce41469C89Bec299"
         ],
         "nodos": [
             {

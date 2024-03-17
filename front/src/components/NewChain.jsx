@@ -104,7 +104,7 @@ export function NewChain() {
         />
         <InputText
           name="subnet"
-          label="Subnet"
+          label="Subnet con /24 al final"
           help="Subnet"
           register={register}
         />
@@ -177,8 +177,12 @@ export function NewChain() {
                     />
                   </td>
                   <td>
-                    <input {...register(`nodos.${index}.type`)} />
-                  </td>
+                    <select {...register(`nodos.${index}.type`)}>
+                        <option value="rpc">RPC</option>
+                        <option value="signer">Signer</option>
+                        <option value="miner">Miner</option>
+                    </select>
+                </td>
                   <td>
                     <input {...register(`nodos.${index}.name`)} />
                   </td>
