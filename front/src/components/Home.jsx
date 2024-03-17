@@ -5,10 +5,23 @@ import { Link } from 'react-router-dom';
 export function Home() {
     const [showButtons, setShowButtons] = useState({});
     const node = useRef();
-
     const { data, isLoading, error } = useQuery("redes", () => {
         return fetch("http://localhost:3000/").then(res => res.json());
     });
+
+    const [status, setStatus] = useState({});
+
+    useEffect(() => {
+        // Actualiza el estado cuando cambien los datos
+        if (data) {
+            data.forEach(async (red) => {
+                const redStatus = await checkStatus(red.id);
+                setStatus(prevStatus => ({ ...prevStatus, [red.id]: redStatus }));
+            });
+        }
+    }, [data]);
+
+
 
     useEffect(() => {
         // Agrega un detector de clics al documento
@@ -43,6 +56,12 @@ export function Home() {
     function pararRed(id) {
         return fetch(`http://localhost:3000/up/${id}`)
     }
+    async function checkStatus(id) {
+        const response = await fetch(`http://localhost:3000/status/${id}`);
+        const data = await response.json();
+        return data.status;
+    }
+    
     //TO DO STATUS DE LA RED
     return (
 
@@ -70,7 +89,7 @@ export function Home() {
                             </td>
                             <td>{red.subnet}</td>
                             <td>
-
+                                    {status[red.id] ? status[red.id] : 'Cargando...'}
                             </td>
                             <td>{red.nodos.length}</td>
                             <td>
@@ -107,73 +126,5 @@ export function Home() {
         
     );
 }
-/*
-/*
-{data.map((red) => {
-                        
-                        useEffect(() => {
-                            fetch(`http://localhost:3000/status/${red.id}`)
-                                .then(response => response.json())
-                                .then(data => setStatus(data.status))
-                                .catch(error => console.error('Error:', error));
-                        }, [red.id]);
-
-*/
 
 
-
-/*
-{showButtons && (
-                <div className="mt-3 text-center">
-                    <button type="button" className="btn btn-primary mr-2">Añadir Nodo</button>
-                    <button type="button" className="btn btn-primary mr-2">Borrar Nodo</button>
-                </div>
-            )}
-            */
-
-
-/*
-export function Home (){
-    const [selectedChainID, setSelectedChainID] = useState(null);
-    const [chainError, setError] = useState(null)
-
-    const { data, isLoading, error } = useQuery('redes', () =>
-        fetch('http://localhost:5555/redes').then((res) => {
-            if (!res.ok) {
-                throw new Error('Hubo un problema con la petición fetch');
-            }
-            return res.json();
-        }));
-    if (isLoading) {
-        return <div>Cargando...</div>;
-    }
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    }
-    if (!data || data.length === 0) {
-        return <div>No se encontraron datos</div>;
-    }
-    return (
-        <div><h1>Lista de redes:</h1>
-            <select
-                className="form-select form-select-lg mb-3"
-                aria-label=".form-select-lg example"
-                onChange={(e) => setSelectedChainID(e.target.value)}
-                value={selectedChainID || ''} // Establece un valor predeterminado si selectedChainID está vacío
-            >
-                {data.length > 0 ? (
-                    // Renderiza las opciones solo si hay datos disponibles
-                    data.map((chain) => (
-                        <option key={chain.CHAIN_ID} value={chain.CHAIN_ID}>
-                            {chain.CHAIN_ID}
-                        </option>
-                    ))
-                ) : (
-                    <option value="" disabled>No hay datos disponibles</option>
-                )}
-            </select>
-            {error && <p className="alert alert-success">{error.message}</p>}
-            {chainError && <p className="alert alert-success">{chainError}</p>}
-        </div>
-    );
-}*/
