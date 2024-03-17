@@ -238,17 +238,100 @@ function createCuentaBootnode(network, pathNetwork) {
     execSync(cmd)
 }
 
-app.get('/removeNetwork/:id', async (req, res) => {
-    const { id } = req.params
-    const pathNetwork = path.join(DIR_NETWORKS, id)
-    if (!existsDir(pathNetwork))
-        res.status(404).send('No se ha encontrado la red')
-    else {
-        execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml down`)
-        fs.rmdirSync(pathNetwork, { recursive: true })
-        res.send({ id: id });
+
+// Endpoint para obtener los últimos bloques de Ethereum
+app.get('/ethereumBlocks', async (req, res) => {
+    const INFURA_URL = 'https://mainnet.infura.io/v3/c04cb8f6039a4d0a9cad4f4023609401';
+
+    try {
+        // Crear el proveedor utilizando Infura
+        const provider = new ethers.JsonRpcProvider(INFURA_URL);
+
+        // Obtener y enviar información de los últimos 5 bloques
+        const latestBlockNumber = await provider.getBlockNumber();
+        const blocksInfo = [];
+
+        for (let i = latestBlockNumber; i > latestBlockNumber - 5; i--) {
+            const block = await provider.getBlock(i);
+            // Para cada bloque, obtener detalles de sus transacciones
+            const transactionsDetails = await Promise.all(block.transactions.map(txHash => provider.getTransaction(txHash)));
+
+            const simplifiedTransactions = transactionsDetails.map(tx => ({
+                hash: tx.hash,
+                from: tx.from,
+                to: tx.to,
+                value: ethers.utils.formatEther(tx.value),
+                gasPrice: ethers.utils.formatUnits(tx.gasPrice, 'gwei'),
+                gasLimit: tx.gasLimit.toString(),
+            }));
+
+            blocksInfo.push({
+                number: block.number,
+                hash: block.hash,
+                timestamp: new Date(block.timestamp * 1000).toLocaleString(),
+                transactions: simplifiedTransactions,
+                miner: block.miner,
+                gasUsed: block.gasUsed.toString(),
+                gasLimit: block.gasLimit.toString(),
+            });
+        }
+
+        res.json(blocksInfo);
+    } catch (error) {
+        console.error('Error al obtener los bloques de Ethereum:', error);
+        res.status(500).send('Error al conectar con la red Ethereum.');
     }
-})
+});
+
+
+
+
+//ENDPOINT para eliminar una red
+app.delete('/network/:id', async (req, res) => {
+    const { id } = req.params;
+    const pathNetwork = path.join(DIR_NETWORKS, id);
+
+    try {
+        // Verificar si Docker está corriendo
+        try {
+            execSync('docker info');
+        } catch (dockerError) {
+            return res.status(503).send('Docker no está corriendo. Asegúrate de que Docker esté funcionando antes de intentar eliminar una red.');
+        }
+
+        if (!existsDir(pathNetwork)) {
+            return res.status(404).send('No se ha encontrado la red');
+        }
+
+        // Detener y eliminar los contenedores Docker de la red
+        execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml down`);
+
+        // Eliminar el directorio de la red
+        fs.rmdirSync(pathNetwork, { recursive: true });
+
+        // Leer el archivo de configuración de redes
+        let networks = JSON.parse(fs.readFileSync(path.join(DIR_BASE, 'networks.json'), 'utf8'));
+        const networkIndex = networks.findIndex(network => network.id === id);
+
+        // Si la red existe en el archivo, eliminarla y actualizar el archivo
+        if (networkIndex !== -1) {
+            networks.splice(networkIndex, 1);
+            fs.writeFileSync(path.join(DIR_BASE, 'networks.json'), JSON.stringify(networks, null, 4));
+        }
+
+        res.send({ message: 'Red eliminada con éxito.' });
+    } catch (error) {
+        console.error(error);
+        // Manejar errores específicos de Docker o del proceso de eliminación
+        if (error.message.includes('docker-compose')) {
+            res.status(500).send('Error al detener los contenedores Docker. Asegúrate de que Docker Compose esté instalado y funcional.');
+        } else {
+            res.status(500).send('Error al eliminar la red.');
+        }
+    }
+});
+
+
 
 app.get('/up/:id', async (req, res) => {
     const { id } = req.params
@@ -376,7 +459,7 @@ app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
     }
 });
 
-
+// Endpoint para crear un nodo para una red en concreto
 app.post('/network/:networkId/node', async (req, res) => {
     const { networkId } = req.params;
     const newNodeDetails = req.body; // Aquí esperamos recibir los detalles del nuevo nodo
@@ -478,35 +561,60 @@ app.get('/faucet/:net/:account/:amount', async (req, res) => {
     res.send({ hash: tx });
 })
 
-app.get('/blocks/:net/', async (req, res) => {
+app.get('/internalBlocks/:net/', async (req, res) => {
     const { net } = req.params
-    // obtenemos la red
-    const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
-    const network = networks.find(i => i.id == net)
-    // si no existe not data found
-    if (!network) {
-        res.status(404).send('No se ha encontrado la red');
-        return;
-    }
-    // obtenemos el directorio donde esta y los datos de la password la cuenta
-    const pathNetwork = path.join(DIR_NETWORKS, network.id)
-    // obtenemos el port del rpc
-    const port = network.nodos.find(i => i.type == 'rpc').port
-    // creamos el provider 
-    const provider = new ethers.JsonRpcProvider(`http://localhost:${port}`);
+    try {
+        // obtenemos la red
+        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString())
+        const network = networks.find(i => i.id == net)
+        // si no existe not data found
+        if (!network) {
+            res.status(404).send('No se ha encontrado la red');
+            return;
+        }
+        // obtenemos el port del rpc
+        const port = network.nodos.find(i => i.type == 'rpc').port
+        // Verificar que hay un nodo RPC y construir la URL
+        const rpcNode = network.nodos.find(i => i.type === 'rpc');
+        if (!rpcNode || !rpcNode.port) {
+            return res.status(404).send('Nodo RPC no encontrado en la red');
+        }
 
-    const blockNumber = await provider.getBlockNumber();
-    let promises = [];
-    for (let i = blockNumber - 10; i < blockNumber; i++) {
-        promises.push(provider.getBlock(i));
+        // creamos el provider 
+        const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
+
+        // Obtener y enviar información de los últimos 10 bloques
+        const latestBlockNumber = await provider.getBlockNumber();
+        const blocksPromises = [];
+        for (let i = Math.max(0, latestBlockNumber - 9); i <= latestBlockNumber; i++) {
+            blocksPromises.push(provider.getBlock(i));
+        }
+        console.log(4)
+        const blocks = await Promise.all(blocksPromises);
+        console.log(5)
+        //res.send(blocks);
+        const simplifiedBlocks = blocks.map(block => ({
+            number: block.number,
+            hash: block.hash,
+            timestamp: block.timestamp,
+            transactions: block.transactions.length,
+            miner: block.miner,
+            gasUsed: block.gasUsed.toString(),
+            gasLimit: block.gasLimit.toString()
+        }));
+
+        res.json(simplifiedBlocks);
+    } catch (error) {
+        console.error('Error al obtener los bloques:', error);
+        res.status(500).send('Error al conectar con el nodo RPC o al procesar los bloques.');
     }
-    const blocks = await Promise.all(promises);
-    res.send(blocks);
 })
+
+
+
 app.get('/isAlive/:net/', async (req, res) => {
     res.send({ "ok": true })
-}
-)
+})
 
 app.get('/isAlive/:net/', async (req, res) => {
     const { net } = req.params
