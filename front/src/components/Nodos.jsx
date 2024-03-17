@@ -16,7 +16,7 @@ export function Nodos() {
 
     //Buscamos lista de redes
     const { data, isLoading, error } = useQuery('redes', () =>
-        fetch('http://localhost:5555/redes').then((res) => {
+        fetch('http://localhost:3000/').then((res) => {
             if (!res.ok) {
                 throw new Error('Hubo un problema con la petición fetch');
             }
@@ -35,8 +35,8 @@ export function Nodos() {
     }
 
     //Funcion para eliminar nodos
-    const eliminarNodos = (nodo) =>{
-        fetch(`http://localhost:5555/deleteNodo/${nodo}`).then((res) => {
+    const eliminarNodos = (nodo,  chainId) =>{
+        fetch(`http://localhost:3000/network/${chainId}/node/${nodo}`).then((res) => {
             if (!res) {
                 throw new Error('Hubo un error al eliminar el nodo')
             }
@@ -52,23 +52,19 @@ export function Nodos() {
         // Busca la red seleccionada por su ID
         // Si encuentra datos con la red seleccionada, nos muestra los nodos, y nos aparece con un botón en cada uno para eliminar
         // Sinó, nos lanza un error
-        const redSeleccionada = data.find((chain) => chain.CHAIN_ID === selectedChainID);
+        const redSeleccionada = data.find((chain) => chain.chainId === selectedChainID);
         if (redSeleccionada) {
             return (
                 <div>
-                    <h2>Nodos de la red {redSeleccionada.CHAIN_ID}:</h2>
-                    <ul>
+                    <h2>Nodos de la red {redSeleccionada.chainId}:</h2>
+                    <table className="table table-striped table-hover">
                         {redSeleccionada.nodos?.map((nodo) => (
-                            <div>
-                                <table>
                                     <tr>
-                                        <td><li key={nodo}>{nodo}</li></td>
-                                        <td><button type="button" className="btn btn-outline-primary" onSubmit={eliminarNodos(nodo)}>Eliminar</button></td>
+                                        <td ><li key={nodo.name}>{nodo.name}</li></td>
+                                        <td ><button type="button" className="btn btn-light custom-button" onSubmit={eliminarNodos(nodo, selectedChainID)}>Eliminar</button></td>
                                     </tr>
-                                </table>
-                            </div>
                         ))}
-                    </ul>
+                    </table>
                 </div>
             );
         } else {
@@ -88,8 +84,8 @@ export function Nodos() {
                 {data.length > 0 ? (
                     // Renderiza las opciones solo si hay datos disponibles
                     data.map((chain) => (
-                        <option key={chain.CHAIN_ID} value={chain.CHAIN_ID}>
-                            {chain.CHAIN_ID}
+                        <option key={chain.chainId} value={chain.chainId}>
+                            {chain.chainId}
                         </option>
                     ))
                 ) : (

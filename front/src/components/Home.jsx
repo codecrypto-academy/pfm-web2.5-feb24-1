@@ -36,6 +36,13 @@ export function Home() {
     const toggleButtons = (id) => {
         setShowButtons(prevState => ({ ...prevState, [id]: !prevState[id] }));
     }
+
+    function lanzarRed(id) {
+        return fetch(`http://localhost:3000/up/${id}`)
+    }
+    function pararRed(id) {
+        return fetch(`http://localhost:3000/up/${id}`)
+    }
     //TO DO STATUS DE LA RED
     return (
 
@@ -49,6 +56,8 @@ export function Home() {
                         <th>IP</th>
                         <th>Status</th>
                         <th>Numero de nodos</th>
+                        <th>Start</th>
+                        <th>Stop</th>
                         <th className="text-center">Opciones</th>
                     </tr>
                 </thead>
@@ -57,16 +66,26 @@ export function Home() {
                         <tr key={red.chainId}>
                             <td>{red.chainId}</td>
                             <td>
-                                <Link to={`/redes/${red.chainId}`}>{red.id}</Link>
+                                <Link to={`/redes/${red.id}`}>{red.id}</Link>
                             </td>
                             <td>{red.subnet}</td>
                             <td>
 
                             </td>
                             <td>{red.nodos.length}</td>
+                            <td>
+                                <button type="button" className="btn btn-light custom-button" onClick={() => lanzarRed(red.id)}>
+                                            <span className="bi bi-play-fill"></span>
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" className="btn btn-light custom-button" onClick={() => pararRed(red.id)}>
+                                            <span className="bi bi-stop-fill"></span>
+                                </button>
+                            </td>
                             <td className="text-center">
                                 <div ref={node}>
-                                    <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.CHAIN_ID)}>
+                                    <button type="button" className="btn btn-light custom-button" onClick={() => toggleButtons(red.chainId)}>
                                         <span className="bi bi-gear"></span>
                                     </button>
                                     {showButtons[red.chainId] && (
@@ -85,6 +104,7 @@ export function Home() {
                 <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href = 'http://localhost:5173/newchain'}>CREAR RED</button>
             </div>
         </div>
+        
     );
 }
 /*
