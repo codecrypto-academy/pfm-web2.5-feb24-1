@@ -125,7 +125,7 @@ export function Home() {
                     ))}
                 </tbody>
             </table>
-            <div className="d-flex justify-content-center">
+            <div className="d-flex justify-content-center mb-2">
                 <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href = 'http://localhost:5173/newchain'}>CREAR RED</button>
             </div>
         </div>
