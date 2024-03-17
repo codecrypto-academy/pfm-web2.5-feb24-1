@@ -93,3 +93,25 @@
 .custom-button:hover {
     background-color: #00FFFF;
 }
+
+@keyframes neon {
+    0% { text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF, 0 0 15px #00FFFF, 0 0 20px #00FFFF; }
+    50% { text-shadow: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF, 0 0 40px #00FFFF; }
+    100% { text-shadow: 0 0 5px #00FFFF, 0 0 10px #00FFFF, 0 0 15px #00FFFF, 0 0 20px #00FFFF; }
+}
+
+.neon {
+    color: #00ff00; /* Color eléctrico */
+    animation: neon 1s infinite;
+}
+
+
+.UP {
+    color: green;
+    animation: neon 1s infinite;
+}
+
+.DOWN {
+    color: red;
+    animation: neon 1s infinite;
+}

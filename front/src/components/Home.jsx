@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 export function Home() {
     const [showButtons, setShowButtons] = useState({});
+    const [isLoading2, setIsLoading2] = useState(true);
     const node = useRef();
     const { data, isLoading, error } = useQuery("redes", () => {
         return fetch("http://localhost:3000/").then(res => res.json());
@@ -11,17 +12,26 @@ export function Home() {
 
     const [status, setStatus] = useState({});
 
+    async function checkStatus(id) {
+        const response = await fetch(`http://localhost:3000/status/${id}`);
+        const data = await response.json();
+        return data.status;
+    }
+    
     useEffect(() => {
-        // Actualiza el estado cuando cambien los datos
         if (data) {
-            data.forEach(async (red) => {
-                const redStatus = await checkStatus(red.id);
-                setStatus(prevStatus => ({ ...prevStatus, [red.id]: redStatus }));
-            });
+            setIsLoading2(true);
+            Promise.all(data.map(async (red) => {
+                try {
+                    const redStatus = await checkStatus(red.id);
+                    setStatus(prevStatus => ({ ...prevStatus, [red.id]: redStatus }));
+                } catch (err) {
+                    setError(err.message);
+                }
+            }))
+            .finally(() => setIsLoading2(false));
         }
     }, [data]);
-
-
 
     useEffect(() => {
         // Agrega un detector de clics al documento
@@ -50,18 +60,14 @@ export function Home() {
         setShowButtons(prevState => ({ ...prevState, [id]: !prevState[id] }));
     }
 
-    function lanzarRed(id) {
-        return fetch(`http://localhost:3000/up/${id}`)
+    async function lanzarRed(id) {
+        await fetch(`http://localhost:3000/up/${id}`);
+    window.location.reload();
     }
     function pararRed(id) {
         return fetch(`http://localhost:3000/up/${id}`)
     }
-    async function checkStatus(id) {
-        const response = await fetch(`http://localhost:3000/status/${id}`);
-        const data = await response.json();
-        return data.status;
-    }
-    
+
     //TO DO STATUS DE LA RED
     return (
 
@@ -88,8 +94,8 @@ export function Home() {
                                 <Link to={`/redes/${red.id}`}>{red.id}</Link>
                             </td>
                             <td>{red.subnet}</td>
-                            <td>
-                                    {status[red.id] ? status[red.id] : 'Cargando...'}
+                            <td className={`bi bi-activity ${status[red.id] === 'UP' ? 'neon' : ''}`}>
+                            
                             </td>
                             <td>{red.nodos.length}</td>
                             <td>
@@ -127,4 +133,4 @@ export function Home() {
     );
 }
 
-
+/*{status[red.id] ? status[red.id] : 'Cargando...'}*/

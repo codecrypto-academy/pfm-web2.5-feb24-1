@@ -297,7 +297,6 @@ app.get('/status/:id', async (req, res) => {
             console.error(`Error ejecutando el comando: ${error}`);
             return;
         }
-
         if (stdout.trim()) {
             return res.send({ status: "UP" })
         } else {
