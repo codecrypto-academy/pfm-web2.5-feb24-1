@@ -28,7 +28,7 @@ function App() {
         <Route path='perfil' element={<Perfil></Perfil>}></Route>
         <Route path='redes' element={<Redes></Redes>}></Route>
         <Route path='nodos' element={<Nodos></Nodos>}></Route>
-        <Route path='nuevo-nodo/:chainId' element={<NuevoNodo></NuevoNodo>}></Route>
+        <Route path='nuevo-nodo/:id' element={<NuevoNodo></NuevoNodo>}></Route>
         <Route path='terminos-y-condiciones' element={<TerminosCondiciones></TerminosCondiciones>}></Route>
         <Route path='privacidad' element={<Privacidad></Privacidad>}></Route>
         <Route path='quienes-somos' element={<QuienesSomos></QuienesSomos>}></Route>
