@@ -15,53 +15,88 @@ export function Nodos() {
     const [chainError, setError] = useState(null)
 
     //Buscamos lista de redes
-    const { data, isLoading, error } = useQuery('redes', () =>
-        fetch('http://localhost:3000/').then((res) => {
-            if (!res.ok) {
-                throw new Error('Hubo un problema con la petición fetch');
-            }
-            return res.json();
-        }));
+    const { data, isLoading, error } = useQuery('redes', async () => {
+        const res = await fetch('http://localhost:3000/');
+        if (!res.ok) {
+            throw new Error('Hubo un problema con la petición fetch');
+        }
+        const data = await res.json();
+        // Si solo hay una red, establece selectedID a su id
+        if (data.length === 1) {
+            setSelectedChainID(data[0].id);
+        }
+        return data;
+    });
+    
     if (isLoading) {
         return <div className="spinner-border" role="status">
         <span className="visually-hidden">Loading...</span>
       </div>
     }
+    
     if (error) {
         return <div>Error: {error.message}</div>;
     }
+    
     if (!data || data.length === 0) {
         return <div>No se encontraron datos</div>;
     }
+    
+    
 
-    //Funcion para eliminar nodos
-    const eliminarNodos = (nodo,  id) =>{
+    //Funcion para eliminar nodos/*
+   /* const eliminarNodos = (id,  nodo) =>{
         fetch(`http://localhost:3000/network/${id}/node/${nodo}`).then((res) => {
             if (!res) {
                 throw new Error('Hubo un error al eliminar el nodo')
             }
             return res.json()
         })
+    }*/
+    function eliminarNodos(id, nodo) {
+        const url = `http://localhost:3000/network/${id}/node/${nodo}`;
+
+        // Realiza la solicitud DELETE
+        fetch(url, {
+            method: 'DELETE',
+        })
+            .then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                    // Red eliminada con éxito
+                   // mostrarMensaje('Se ha eliminado el nodo.', true);
+                } else {
+                    // Error al eliminar la red
+                   // mostrarMensaje('No se ha eliminado el nodo.', false);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la solicitud:', error);
+               // mostrarMensaje('Error al eliminar la red.', false);
+            });
     }
     // Función para mostrar los nodos de la red seleccionada
     const mostrarNodos = () => {
-        // Verifica si data y selectedChainID son válidos
+        // Verifica si data y selectedID son válidos
         if (!data || !selectedID) {
             return <div>Selecciona una red válida para ver los nodos.</div>;
         }
+        
         // Busca la red seleccionada por su ID
         // Si encuentra datos con la red seleccionada, nos muestra los nodos, y nos aparece con un botón en cada uno para eliminar
         // Sinó, nos lanza un error
         const redSeleccionada = data.find((chain) => chain.id === selectedID);
+        
+        
         if (redSeleccionada) {
             return (
-                <div>
+                <div className="text-justify">
                     <h2>Nodos de la red {redSeleccionada.id}:</h2>
                     <table className="table table-striped table-hover">
                         {redSeleccionada.nodos?.map((nodo) => (
-                                    <tr>
-                                        <td ><li key={nodo.name}>{nodo.name}</li></td>
-                                        <td ><button type="button" className="btn btn-light custom-button" onSubmit={eliminarNodos(nodo, selectedID)}>Eliminar</button></td>
+                                    <tr key={nodo.name} >
+                                        <td ><h5 >{nodo.name}</h5></td>
+                                        <td ><button type="button" className="btn btn-light custom-button" onClick={() => eliminarNodos(redSeleccionada.id, nodo.name)}>Eliminar</button></td>
                                     </tr>
                         ))}
                     </table>

@@ -417,7 +417,7 @@ app.get('/:id', async (req, res) => {
 
 app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
     const { networkId, nodeName } = req.params;
-
+    
     try {
         let networks = JSON.parse(fs.readFileSync(path.join(DIR_BASE, 'networks.json'), 'utf8'));
         const networkIndex = networks.findIndex(network => network.id === networkId);
@@ -440,15 +440,26 @@ app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
 
         // Ubicación del directorio de la red.
         const pathNetwork = path.join(DIR_NETWORKS, networkId);
+        const pathNode = path.join(DIR_NETWORKS, networkId,nodeName);
 
-        // Asegurarse de que el directorio de la red existe antes de intentar reiniciar.
-        if (existsDir(pathNetwork)) {
+        // Borrar el directorio del nodo si existe.
+        if (fs.existsSync(pathNetwork)) {
+            console.log(pathNetwork)
             // Bajar la red.
-            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml down`);
+            execSync(`docker-compose -f ${ pathNetwork }/docker-compose.yml down`);
 
-            // Reiniciar la red.
-            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`);
-            res.send({ message: 'Nodo eliminado con éxito y red reiniciada.' });
+            // Eliminar el directorio del nodo de forma recursiva.
+            fs.rm(pathNode, { recursive: true, force: true }, (err) => {
+                if (err) {
+                    console.error(err);
+                    return res.status(500).send('Error al eliminar el directorio del nodo.');
+                }
+
+                // Reiniciar la red después de eliminar el directorio, si es necesario.
+                // Nota: Puede que necesites ajustar esta lógica basándote en tus necesidades específicas.
+                execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml up -d`);
+                res.send({ message: 'Nodo eliminado con éxito y red reiniciada.' });
+            });
         } else {
             res.status(404).send('Directorio de la red no encontrado.');
         }
