@@ -11,7 +11,7 @@ import { useQuery } from 'react-query'
 export function Nodos() {
 
     //Creamos un estado para guardar la red seleccionada y detectar cuando se cambia.
-    const [selectedChainID, setSelectedChainID] = useState(null);
+    const [selectedID, setSelectedChainID] = useState(null);
     const [chainError, setError] = useState(null)
 
     //Buscamos lista de redes
@@ -35,8 +35,8 @@ export function Nodos() {
     }
 
     //Funcion para eliminar nodos
-    const eliminarNodos = (nodo,  chainId) =>{
-        fetch(`http://localhost:3000/network/${chainId}/node/${nodo}`).then((res) => {
+    const eliminarNodos = (nodo,  id) =>{
+        fetch(`http://localhost:3000/network/${id}/node/${nodo}`).then((res) => {
             if (!res) {
                 throw new Error('Hubo un error al eliminar el nodo')
             }
@@ -46,29 +46,32 @@ export function Nodos() {
     // Función para mostrar los nodos de la red seleccionada
     const mostrarNodos = () => {
         // Verifica si data y selectedChainID son válidos
-        if (!data || !selectedChainID) {
+        if (!data || !selectedID) {
             return <div>Selecciona una red válida para ver los nodos.</div>;
         }
         // Busca la red seleccionada por su ID
         // Si encuentra datos con la red seleccionada, nos muestra los nodos, y nos aparece con un botón en cada uno para eliminar
         // Sinó, nos lanza un error
-        const redSeleccionada = data.find((chain) => chain.chainId === selectedChainID);
+        const redSeleccionada = data.find((chain) => chain.id === selectedID);
         if (redSeleccionada) {
             return (
                 <div>
-                    <h2>Nodos de la red {redSeleccionada.chainId}:</h2>
+                    <h2>Nodos de la red {redSeleccionada.id}:</h2>
                     <table className="table table-striped table-hover">
                         {redSeleccionada.nodos?.map((nodo) => (
                                     <tr>
                                         <td ><li key={nodo.name}>{nodo.name}</li></td>
-                                        <td ><button type="button" className="btn btn-light custom-button" onSubmit={eliminarNodos(nodo, selectedChainID)}>Eliminar</button></td>
+                                        <td ><button type="button" className="btn btn-light custom-button" onSubmit={eliminarNodos(nodo, selectedID)}>Eliminar</button></td>
                                     </tr>
                         ))}
                     </table>
+                    <div className="d-flex justify-content-left">
+                        <button className="btn btn-light col-2 mx-auto text-center custom-button" onClick={() => window.location.href = `http://localhost:5173/nuevo-nodo/${redSeleccionada.id}`}>CREAR NODO</button>
+                    </div>
                 </div>
             );
         } else {
-            return <div>No se encontró la red con el ID {selectedChainID}.</div>;
+            return <div>No se encontró la red con el ID {selectedID}.</div>;
         }
     };
     //Ahora creamos una lista, el select tiene la opcion de onChange, el cual nos cambiará el estado de la red seleccionada
@@ -79,13 +82,13 @@ export function Nodos() {
                 className="form-select form-select-lg mb-3"
                 aria-label=".form-select-lg example"
                 onChange={(e) => setSelectedChainID(e.target.value)}
-                value={selectedChainID || ''} // Establece un valor predeterminado si selectedChainID está vacío
+                value={selectedID || ''} // Establece un valor predeterminado si selectedChainID está vacío
             >
                 {data.length > 0 ? (
                     // Renderiza las opciones solo si hay datos disponibles
                     data.map((chain) => (
-                        <option key={chain.chainId} value={chain.chainId}>
-                            {chain.chainId}
+                        <option key={chain.id} value={chain.id}>
+                            {chain.id}
                         </option>
                     ))
                 ) : (
