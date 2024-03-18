@@ -3,6 +3,7 @@
     "bootstrap-icons": "^1.11.3",
     "cors": "^2.8.5",
     "ethers": "^6.11.1",
+    "js-yaml": "^4.1.0",
     "web3": "^4.5.0"
   },
   "name": "curso-proyecto-faucet",

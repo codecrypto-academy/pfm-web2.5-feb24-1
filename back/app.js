@@ -4,6 +4,7 @@ const path = require('path');
 const app = express();
 const cors = require('cors');
 const ethers = require('ethers');
+const yaml = require('js-yaml');
 const { execSync, exec } = require("child_process");
 const port = 3000;
 
@@ -441,6 +442,15 @@ app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
             // Bajar la red.
             execSync(`docker-compose -f ${ pathNetwork }/docker-compose.yml down`);
 
+            // Ubicación del archivo docker-compose.yml.
+            const dockerComposePath = path.join(pathNetwork, 'docker-compose.yml');
+            
+            // Leer el archivo docker-compose.yml.
+            const dockerCompose = yaml.load(fs.readFileSync(dockerComposePath, 'utf8'));
+
+            // Eliminar la configuración del nodo.
+            delete dockerCompose.services[nodeName];
+            fs.writeFileSync(dockerComposePath, yaml.dump(dockerCompose));
             // Eliminar el directorio del nodo de forma recursiva.
             fs.rm(pathNode, { recursive: true, force: true }, (err) => {
                 if (err) {
