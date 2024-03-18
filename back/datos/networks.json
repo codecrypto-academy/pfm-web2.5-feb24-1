@@ -7,6 +7,25 @@
         "alloc": [
             "C077193960479a5e769f27B1ce41469C89Bec299"
         ],
-        "nodos": []
+        "nodos": [
+            {
+                "type": "miner",
+                "name": "miner1",
+                "ip": "172.16.239.30",
+                "port": ""
+            },
+            {
+                "type": "rpc",
+                "name": "rpc2",
+                "ip": "172.16.239.40",
+                "port": "8547"
+            },
+            {
+                "type": "normal",
+                "name": "normal1",
+                "ip": "172.16.239.50",
+                "port": ""
+            }
+        ]
     }
 ]
