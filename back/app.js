@@ -244,46 +244,39 @@ app.get('/ethereumBlocks', async (req, res) => {
     const INFURA_URL = 'https://mainnet.infura.io/v3/c04cb8f6039a4d0a9cad4f4023609401';
 
     try {
-        // Crear el proveedor utilizando Infura
         const provider = new ethers.JsonRpcProvider(INFURA_URL);
-
-        // Obtener y enviar información de los últimos 5 bloques
         const latestBlockNumber = await provider.getBlockNumber();
         const blocksInfo = [];
 
         for (let i = latestBlockNumber; i > latestBlockNumber - 5; i--) {
-            const block = await provider.getBlock(i);
-            // Para cada bloque, obtener detalles de sus transacciones
-            const transactionsDetails = await Promise.all(block.transactions.map(txHash => provider.getTransaction(txHash)));
+            try {
+                const block = await provider.getBlock(i);
+                // Obtener los detalles de las primeras dos transacciones
+                const transactionsDetails = block.transactions.slice(0, 2).map(txHash => {
+                    return { hash: txHash };
+                });
 
-            const simplifiedTransactions = transactionsDetails.map(tx => ({
-                hash: tx.hash,
-                from: tx.from,
-                to: tx.to,
-                value: ethers.utils.formatEther(tx.value),
-                gasPrice: ethers.utils.formatUnits(tx.gasPrice, 'gwei'),
-                gasLimit: tx.gasLimit.toString(),
-            }));
-
-            blocksInfo.push({
-                number: block.number,
-                hash: block.hash,
-                timestamp: new Date(block.timestamp * 1000).toLocaleString(),
-                transactions: simplifiedTransactions,
-                miner: block.miner,
-                gasUsed: block.gasUsed.toString(),
-                gasLimit: block.gasLimit.toString(),
-            });
+                blocksInfo.push({
+                    number: block.number,
+                    hash: block.hash,
+                    timestamp: new Date(block.timestamp * 1000).toLocaleString(),
+                    miner: block.miner,
+                    gasUsed: block.gasUsed.toString(),
+                    gasLimit: block.gasLimit.toString(),
+                    totalTransactions: block.transactions.length,
+                    transactions: transactionsDetails
+                });
+            } catch (blockError) {
+                console.error(`Error obteniendo el bloque ${i}:`, blockError);
+            }
         }
 
         res.json(blocksInfo);
     } catch (error) {
-        console.error('Error al obtener los bloques de Ethereum:', error);
+        console.error('Error al obtener los últimos bloques de Ethereum:', error);
         res.status(500).send('Error al conectar con la red Ethereum.');
     }
 });
-
-
 
 
 //ENDPOINT para eliminar una red
@@ -590,7 +583,7 @@ app.get('/internalBlocks/:net/', async (req, res) => {
         }
         console.log(4)
         const blocks = await Promise.all(blocksPromises);
-        console.log(5)
+
         //res.send(blocks);
         const simplifiedBlocks = blocks.map(block => ({
             number: block.number,
@@ -641,9 +634,127 @@ app.get('/isAlive/:net/', async (req, res) => {
     } catch (error) {
         res.send({ alive: false })
     }
-
-
 })
+
+//Endpoint para ver transaciones de un bloque de una red en concreta
+app.get('/internalBlock/:net/:blockNumber', async (req, res) => {
+    const { net, blockNumber } = req.params;
+
+    try {
+        // Convertir blockNumber a un número si es posible, sino usarlo como está
+        const blockNum = isNaN(parseInt(blockNumber)) ? blockNumber : parseInt(blockNumber);
+
+        // Buscar la configuración de la red en networks.json
+        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString());
+        const network = networks.find(n => n.id === net);
+
+        if (!network) {
+            return res.status(404).send('Red no encontrada.');
+        }
+
+        // Encontrar el nodo RPC en la configuración de la red
+        const rpcNode = network.nodos.find(n => n.type === 'rpc');
+        if (!rpcNode) {
+            return res.status(404).send('Nodo RPC no encontrado en la red.');
+        }
+
+        // creamos el provider 
+        const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
+
+        // Usar blockNum al obtener el bloque y las transacciones
+        const block = await provider.getBlock(blockNum);
+        if (!block) {
+            return res.status(404).send('Bloque no encontrado.');
+        }
+
+        // Simplificar la información del bloque para la respuesta
+        const simplifiedBlock = {
+            number: block.number,
+            hash: block.hash,
+            timestamp: new Date(block.timestamp * 1000).toLocaleString(),
+            totalTransactions: block.transactions.length,
+            transactions: block.transactions.map(tx => {
+                return {
+                    hash: tx.hash,
+                    from: tx.from,
+                    to: tx.to,
+                    value: ethers.utils.formatEther(tx.value),
+                    // Crear el enlace hacia los datos de la transacción
+                    link: `/transaction/${net}/${tx.hash}`
+                };
+            }),
+            miner: block.miner,
+            gasUsed: block.gasUsed.toString(),
+            gasLimit: block.gasLimit.toString(),
+        };
+
+        res.json(simplifiedBlock);
+    } catch (error) {
+        console.error('Error al obtener el bloque:', error);
+        res.status(500).send('Error al conectar con el nodo RPC o al procesar el bloque.');
+    }
+});
+
+//Endpoint para mostrar todos los detalles
+app.get('/transaction/:net/:txHash', async (req, res) => {
+    const { net, txHash } = req.params;
+
+    try {
+        // Buscar la configuración de la red en networks.json
+        const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString());
+        const network = networks.find(n => n.id === net);
+
+        if (!network) {
+            return res.status(404).send('Red no encontrada.');
+        }
+
+        // Encontrar el nodo RPC en la configuración de la red
+        const rpcNode = network.nodos.find(n => n.type === 'rpc');
+        if (!rpcNode) {
+            return res.status(404).send('Nodo RPC no encontrado en la red.');
+        }
+
+        // Crear el provider
+        const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
+
+        // Obtener los detalles de la transacción usando su hash
+        const tx = await provider.getTransaction(txHash);
+        if (!tx) {
+            return res.status(404).send('Transacción no encontrada.');
+        }
+
+        // Opcionalmente, obtener el recibo de la transacción para más detalles, como el gas usado
+        const receipt = await provider.getTransactionReceipt(txHash);
+
+        // Simplificar la información de la transacción para la respuesta
+        const simplifiedTx = {
+            hash: tx.hash,
+            from: tx.from,
+            to: tx.to,
+            value: ethers.utils.formatEther(tx.value),
+            gasPrice: ethers.utils.formatUnits(tx.gasPrice, 'gwei'),
+            gasLimit: tx.gasLimit.toString(),
+            nonce: tx.nonce,
+            blockHash: tx.blockHash,
+            blockNumber: tx.blockNumber,
+            transactionIndex: tx.transactionIndex,
+            // Datos del recibo de la transacción
+            gasUsed: receipt ? receipt.gasUsed.toString() : 'N/A',
+            status: receipt ? receipt.status : 'N/A',
+            logs: receipt ? receipt.logs.map(log => ({
+                address: log.address,
+                data: log.data,
+                topics: log.topics,
+            })) : [],
+        };
+
+        res.json(simplifiedTx);
+    } catch (error) {
+        console.error('Error al obtener la transacción:', error);
+        res.status(500).send('Error al conectar con el nodo RPC o al procesar la transacción.');
+    }
+});
+
 
 function initialize() {
     //Creamos red nada mas lanzar la app con ID 111
