@@ -96,7 +96,6 @@ export function Home() {
     }
 
 
-    //TO DO STATUS DE LA RED
     return (
 
         <div className="container mt-5">
@@ -119,7 +118,7 @@ export function Home() {
                         <tr key={red.chainId}>
                             <td>{red.chainId}</td>
                             <td>
-                                <Link to={`/redes/${red.id}`}>{red.id}</Link>
+                                <Link to={`/redinfo/${red.id}`}>{red.id}</Link>
                             </td>
                             <td>{red.subnet}</td>
                             <td className={`bi bi-activity ${status[red.id] === 'UP' ? 'neon' : ''}`}>
