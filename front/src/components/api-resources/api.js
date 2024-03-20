@@ -17,7 +17,7 @@ export async function getTx(tx) {
 }
 
 export async function getBlock(bloque) {
-    const response = await fetch(`http://localhost:3000/bloque/${bloque.queryKey[1]}`)
+    const response = await fetch(`http://localhost:3000/internalBlock/${bloque.queryKey[0]}/${bloque.queryKey[1]}`)
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }

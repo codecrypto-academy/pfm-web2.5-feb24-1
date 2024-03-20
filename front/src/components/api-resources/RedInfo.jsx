@@ -37,7 +37,7 @@ export function Redinfo() {
             {
                     data.map((item, index) =>
                         <tr key={index}>
-                            <td>{item.number}</td>
+                            <td><Link to={`/internalBlock/${params.id}/${item.number}`}></Link></td>
                             <td><Link to={`/tx/${params.id}/${item.hash}`}></Link></td>
                             <td>{item.timestamp}</td>
                             <td>{item.transactions}</td>

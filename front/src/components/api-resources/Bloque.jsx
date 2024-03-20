@@ -5,7 +5,7 @@ import {getBlock} from "./api"
 
 export function Bloque() {
     const params = useParams()
-    const {isLoading, isError, data} = useQuery(['bloque', params.bloque], getBlock)
+    const {isLoading, isError, data} = useQuery([params.idRed, params.idBloque], getBlock)
     if (isLoading)
         return <h1>Cargando</h1>
     if (isError)
