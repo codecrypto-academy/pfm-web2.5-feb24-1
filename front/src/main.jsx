@@ -18,6 +18,7 @@ import { Redinfo } from './components/api-resources/RedInfo.jsx'
 import { Tx } from './components/api-resources/Tx.jsx'
 import { Bloque } from './components/api-resources/Bloque.jsx'
 import { Balance } from './components/api-resources/Balance.jsx'
+import { Fucet } from './components/api-resources/Faucet.jsx'
 
 const queryClient = new QueryClient()
 function App() {
@@ -39,6 +40,7 @@ function App() {
         <Route path='tx/:id/:tx' element={<Tx></Tx>}></Route>
         <Route path='internalBlock/:idRed/:idBloque' element={<Bloque></Bloque>}></Route>
         <Route path='balance/:id/:address' element={<Balance></Balance>}></Route>
+        <Route path='faucet' element={<Fucet></Fucet>}></Route>
       </Route>
     </Routes>
   </BrowserRouter >
