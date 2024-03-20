@@ -7,7 +7,7 @@ import { getChain } from "./api";
 export function Redinfo() {
     useEffect(() => {
         const intervalo = setInterval(() => {
-          window.location.reload();
+          //window.location.reload();
         }, 2000); // Se ejecuta cada 2 segundos
     
         // Limpiar el intervalo cuando el componente se desmonte
