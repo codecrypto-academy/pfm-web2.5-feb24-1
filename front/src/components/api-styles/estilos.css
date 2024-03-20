@@ -29,9 +29,27 @@
 
 .transacciones-container {
     display: block;
-    max-height: 50px; 
-    overflow-y: auto; /* Habilita el desplazamiento vertical */
-    white-space: normal; /* Asegura que el contenido pueda envolverse */
-  }
-  
-  
+    max-height: 50px;
+    overflow-y: auto;
+    /* Habilita el desplazamiento vertical */
+    white-space: normal;
+    /* Asegura que el contenido pueda envolverse */
+}
+
+.btn-start:hover {
+    background-color: lightgreen !important;
+}
+
+.btn-stop:hover {
+    background-color: lightcoral !important;
+}
+
+.btn-restart:hover {
+    background-color: lightblue !important;
+}
+
+
+.btn-eliminar:hover {
+    background-color: #f8d7da; 
+    color: #721c24; 
+}

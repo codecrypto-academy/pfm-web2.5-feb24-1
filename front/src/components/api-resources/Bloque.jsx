@@ -5,7 +5,7 @@ import { getBlock } from "./api";
 import CopyToClipboardButton from './CopyToClipboardButton'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
-import '../api-styles/Bloque.css'; // Ajusta esta importación según la estructura de tu proyecto
+import '../api-styles/estilos.css'; 
 
 // Componente principal que muestra la información de un bloque específico
 export function Bloque() {
@@ -70,7 +70,7 @@ export function Bloque() {
                             {data.transactions.map((item, index) => (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={`/tx/${item.hash}`}>{shorten(item.hash)}</Link>
+                                        <Link to={`/tx/${params.idRed}/${item.hash}`}>{shorten(item.hash)}</Link>
                                         <CopyToClipboardButton text={item.hash}>
                                             <FontAwesomeIcon icon={faCopy} className="copy-icon" />
                                         </CopyToClipboardButton>

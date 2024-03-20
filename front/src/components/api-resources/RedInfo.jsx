@@ -5,7 +5,7 @@ import { getChain } from "./api";
 import CopyToClipboardButton from './CopyToClipboardButton'; // Asegúrate de tener este componente
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
-import '../api-styles/Bloque.css'; // Ajusta esta importación según la estructura de tu proyecto
+import '../api-styles/estilos.css'; // Ajusta esta importación según la estructura de tu proyecto
 
 export function Redinfo() {
     const params = useParams();
@@ -19,7 +19,7 @@ export function Redinfo() {
 
     return (
         <div>
-            <h1>Información de la Red y Transacciones</h1>
+            <h2>Información de la Red y Transacciones</h2>
             <table className="table">
                 <thead>
                     <tr>

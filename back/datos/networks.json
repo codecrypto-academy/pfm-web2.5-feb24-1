@@ -60,7 +60,7 @@
     },
     {
         "id": "444555",
-        "chainId": "444555",
+        "chainId": "eorj",
         "subnet": "192.168.10.0/24",
         "ipBootnode": "192.168.10.10",
         "alloc": [

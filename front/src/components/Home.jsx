@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useQuery } from 'react-query'
 import { Link } from 'react-router-dom';
+import './api-styles/estilos.css';
 
 export function Home() {
     const [showButtons, setShowButtons] = useState({});
@@ -70,9 +71,16 @@ export function Home() {
         await fetch(`http://localhost:3000/up/${id}`);
         window.location.reload();
     }
-    function pararRed(id) {
-        return fetch(`http://localhost:3000/up/${id}`)
+
+    async function reiniciarRed(id) {
+        await fetch(`http://localhost:3000/restart/${id}`);
+        window.location.reload();
     }
+
+    function pararRed(id) {
+        return fetch(`http://localhost:3000/stop/${id}`)
+    }
+
     function eliminarRed(id) {
         const url = `http://localhost:3000/network/${id}`;
 
@@ -100,7 +108,7 @@ export function Home() {
 
         <div className="container mt-5">
             <h2>Listado de Redes</h2>
-            <table className="table table-striped">
+            <table className="table table-striped text-center">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -110,7 +118,8 @@ export function Home() {
                         <th>Numero de nodos</th>
                         <th>Start</th>
                         <th>Stop</th>
-                        <th className="text-center">Opciones</th>
+                        <th>Restart</th>
+                        <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody >
@@ -120,19 +129,22 @@ export function Home() {
                             <td>
                                 <Link to={`/redinfo/${red.id}`}>{red.id}</Link>
                             </td>
-                            <td>{red.subnet}</td>
-                            <td className={`bi bi-activity ${status[red.id] === 'UP' ? 'neon' : ''}`}>
-
-                            </td>
-                            <td>{red.nodos.length}</td>
+                            <td className="text-center">{red.subnet}</td>
+                            <td className={`bi bi-activity ${status[red.id] === 'UP' ? 'neon' : ''}`}></td>
+                            <td className="text-center">{red.nodos.length}</td>
                             <td>
-                                <button type="button" className="btn btn-light custom-button" onClick={() => lanzarRed(red.id)}>
+                                <button type="button" className="btn btn-light custom-button btn-start" onClick={() => lanzarRed(red.id)}>
                                     <span className="bi bi-play-fill"></span>
                                 </button>
                             </td>
                             <td>
-                                <button type="button" className="btn btn-light custom-button" onClick={() => pararRed(red.id)}>
+                                <button type="button" className="btn btn-light custom-button btn-stop" onClick={() => pararRed(red.id)}>
                                     <span className="bi bi-stop-fill"></span>
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" className="btn btn-light custom-button btn-restart" onClick={() => reiniciarRed(red.id)}>
+                                    <span className="bi bi-arrow-clockwise"></span>
                                 </button>
                             </td>
                             <td className="text-center">
@@ -142,10 +154,9 @@ export function Home() {
                                     </button>
                                     {showButtons[red.chainId] && (
                                         <div style={{ position: 'absolute', backgroundColor: 'white' }}>
-                                            <button type="button" className="btn btn-light">Modificar Red</button>
                                             <button
                                                 type="button"
-                                                className="btn btn-light"
+                                                className="btn btn-light btn-eliminar"
                                                 onClick={() => eliminarRed(red.id)}
                                             >
                                                 Eliminar Red
@@ -165,5 +176,3 @@ export function Home() {
 
     );
 }
-
-/*{status[red.id] ? status[red.id] : 'Cargando...'}*/

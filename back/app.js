@@ -326,7 +326,6 @@ app.delete('/network/:id', async (req, res) => {
 });
 
 
-
 app.get('/up/:id', async (req, res) => {
     const { id } = req.params
     var networks = null
@@ -365,6 +364,66 @@ app.get('/up/:id', async (req, res) => {
     }
 })
 
+
+app.get('/start/:id', async (req, res) => {
+    const { id } = req.params;
+    const pathNetwork = path.join(DIR_NETWORKS, id);
+
+    if (!existsDir(pathNetwork)) {
+        res.status(404).send('No se ha encontrado la red');
+    } else {
+        try {
+            // Ejecuta el comando start de docker-compose
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml start`);
+
+            res.send('La red ha sido iniciada correctamente.');
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('Error al intentar iniciar la red');
+        }
+    }
+});
+
+
+app.get('/stop/:id', async (req, res) => {
+    const { id } = req.params;
+    const pathNetwork = path.join(DIR_NETWORKS, id);
+
+    if (!existsDir(pathNetwork)) {
+        res.status(404).send('No se ha encontrado la red');
+    } else {
+        try {
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml stop`);
+            res.send('La red ha sido detenida correctamente.');
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('Error al intentar detener la red');
+        }
+    }
+});
+
+
+app.get('/restart/:id', async (req, res) => {
+    const { id } = req.params;
+    const pathNetwork = path.join(DIR_NETWORKS, id);
+
+    if (!existsDir(pathNetwork)) {
+        res.status(404).send('No se ha encontrado la red');
+    } else {
+        try {
+            // Ejecuta el comando restart de docker-compose
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml restart`);
+
+            res.send('La red ha sido reiniciada correctamente.');
+        } catch (error) {
+            console.log(error);
+            res.status(500).send('Error al intentar reiniciar la red');
+        }
+    }
+});
+
+
+
 app.get('/status/:id', async (req, res) => {
     const { id } = req.params;
     const cmd = `docker ps -f "name=${id}" -q`;
@@ -382,19 +441,7 @@ app.get('/status/:id', async (req, res) => {
     });
 })
 
-app.get('/restart/:id', async (req, res) => {
-    const { id } = req.params
-    const pathNetwork = path.join(DIR_NETWORKS, id)
-    // docker-compose stop 
-    // update el docker-compose
-    if (!existsDir(pathNetwork))
-        res.status(404).send('No se ha encontrado la red')
-    else {
-        execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml restart`)
-        res.send('ok');
-    }
 
-});
 app.get('/', async (req, res) => {
     res.send(JSON.parse(fs.readFileSync('./datos/networks.json').toString()));
 }
@@ -411,7 +458,7 @@ app.get('/:id', async (req, res) => {
 
 app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
     const { networkId, nodeName } = req.params;
-    
+
     try {
         let networks = JSON.parse(fs.readFileSync(path.join(DIR_BASE, 'networks.json'), 'utf8'));
         const networkIndex = networks.findIndex(network => network.id === networkId);
@@ -434,17 +481,17 @@ app.delete('/network/:networkId/node/:nodeName', async (req, res) => {
 
         // Ubicación del directorio de la red.
         const pathNetwork = path.join(DIR_NETWORKS, networkId);
-        const pathNode = path.join(DIR_NETWORKS, networkId,nodeName);
+        const pathNode = path.join(DIR_NETWORKS, networkId, nodeName);
 
         // Borrar el directorio del nodo si existe.
         if (fs.existsSync(pathNetwork)) {
             console.log(pathNetwork)
             // Bajar la red.
-            execSync(`docker-compose -f ${ pathNetwork }/docker-compose.yml down`);
+            execSync(`docker-compose -f ${pathNetwork}/docker-compose.yml down`);
 
             // Ubicación del archivo docker-compose.yml.
             const dockerComposePath = path.join(pathNetwork, 'docker-compose.yml');
-            
+
             // Leer el archivo docker-compose.yml.
             const dockerCompose = yaml.load(fs.readFileSync(dockerComposePath, 'utf8'));
 
@@ -773,17 +820,17 @@ app.get('/transaction/:net/:txHash', async (req, res) => {
 app.get('/balance/:net/:address', async (req, res) => {
     const { net, address } = req.params;
     const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString());
-        const network = networks.find(n => n.id === net);
-        if (!network) {
-            return res.status(404).send('Red no encontrada.');
-        }
-        // Encontrar el nodo RPC en la configuración de la red
-        const rpcNode = network.nodos.find(n => n.type === 'rpc');
-        if (!rpcNode) {
-            return res.status(404).send('Nodo RPC no encontrado en la red.');
-        }
+    const network = networks.find(n => n.id === net);
+    if (!network) {
+        return res.status(404).send('Red no encontrada.');
+    }
+    // Encontrar el nodo RPC en la configuración de la red
+    const rpcNode = network.nodos.find(n => n.type === 'rpc');
+    if (!rpcNode) {
+        return res.status(404).send('Nodo RPC no encontrado en la red.');
+    }
 
-        // Crear el provider
+    // Crear el provider
     const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
     const balance = await provider.getBalance(address)
     res.send(balance.toString())
