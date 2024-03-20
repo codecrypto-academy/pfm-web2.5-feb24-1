@@ -6,6 +6,7 @@ const cors = require('cors');
 const ethers = require('ethers');
 const yaml = require('js-yaml');
 const { execSync, exec } = require("child_process");
+const {Web3} = require("web3")
 const port = 3000;
 
 app.listen(3000, () => console.log('Listening on port 3000'));
@@ -538,6 +539,8 @@ app.post('/', async (req, res) => {
     }
 });
 
+//Endpoint para el faucet
+
 app.get('/faucet/:net/:account/:amount', async (req, res) => {
     // los parametros son la red, la cuenta y la cantidad
     const { account, net, amount } = req.params
@@ -568,10 +571,10 @@ app.get('/faucet/:net/:account/:amount', async (req, res) => {
     const tx = await signer.sendTransaction({
         from: address,
         to: account,
-        value: ethers.parseUnits(amount, 18)
+        value: ethers.parseUnits(amount,18)
     });
     // devolvemos la transaccion
-    res.send({ hash: tx });
+    res.send({hash:tx});
 })
 
 app.get('/internalBlocks/:net/', async (req, res) => {
@@ -793,13 +796,4 @@ app.get('/balance/:net/:address', async (req, res) => {
     const balance = await provider.getBalance(address)
     res.send(balance.toString())
 })
-
-function initialize() {
-    //Creamos red nada mas lanzar la app con ID 111
-
-    //Escribimos en networks.json
-
-
-}
-
 

@@ -43,6 +43,7 @@ export function Inicio() {
                                 <Link className="nav-item nav-link" to="/perfil">Perfil</Link>
                                 <Link className="nav-item nav-link" to="/redes">Redes</Link>
                                 <Link className="nav-item nav-link" to="/nodos">Nodos</Link>
+                                <Link className="nav-item nav-link" to="/faucet">Faucet</Link>
                             </div>
                         </div>
                     </div>
