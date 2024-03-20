@@ -14,7 +14,8 @@ import { QuienesSomos } from './components/QuienesSomos.jsx'
 import { Home } from './components/Home.jsx'
 import './index.css'
 import { NuevoNodo } from './components/NuevoNodo.jsx'
-import { Redinfo } from './components/RedInfo.jsx'
+import { Redinfo } from './components/api-resources/RedInfo.jsx'
+import { Tx } from './components/api-resources/Tx.jsx'
 
 const queryClient = new QueryClient()
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path='privacidad' element={<Privacidad></Privacidad>}></Route>
         <Route path='quienes-somos' element={<QuienesSomos></QuienesSomos>}></Route>
         <Route path='redinfo/:id' element={<Redinfo></Redinfo>}></Route>
+        <Route path='tx/:tx' element={<Tx></Tx>}></Route>
       </Route>
     </Routes>
   </BrowserRouter >

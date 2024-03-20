@@ -602,7 +602,6 @@ app.get('/internalBlocks/:net/', async (req, res) => {
         for (let i = Math.max(0, latestBlockNumber - 9); i <= latestBlockNumber; i++) {
             blocksPromises.push(provider.getBlock(i));
         }
-        console.log(4)
         const blocks = await Promise.all(blocksPromises);
 
         //res.send(blocks);
@@ -741,19 +740,20 @@ app.get('/transaction/:net/:txHash', async (req, res) => {
         // Obtener los detalles de la transacción usando su hash
         const tx = await provider.getTransaction(txHash);
         if (!tx) {
+            console.log(txHash)
             return res.status(404).send('Transacción no encontrada.');
         }
 
         // Opcionalmente, obtener el recibo de la transacción para más detalles, como el gas usado
         const receipt = await provider.getTransactionReceipt(txHash);
-
+        console.log(tx.value)
         // Simplificar la información de la transacción para la respuesta
         const simplifiedTx = {
             hash: tx.hash,
             from: tx.from,
             to: tx.to,
-            value: ethers.utils.formatEther(tx.value),
-            gasPrice: ethers.utils.formatUnits(tx.gasPrice, 'gwei'),
+            value: ethers.formatEther(tx.value),
+            gasPrice: ethers.formatUnits(tx.gasPrice, 'gwei'),
             gasLimit: tx.gasLimit.toString(),
             nonce: tx.nonce,
             blockHash: tx.blockHash,
@@ -776,6 +776,15 @@ app.get('/transaction/:net/:txHash', async (req, res) => {
     }
 });
 
+app.get("/tx/:tx", async (req, res) => {
+    try {
+        const tx = await web3.eth.getTransaction(req.params.tx)
+        const serializedBlock = JSON.stringify(tx, serializeBigInt);
+        res.send(JSON.stringify(serializedBlock))
+    } catch (error) {
+        res.status(500).send({mensaje: error})
+    }
+})
 
 function initialize() {
     //Creamos red nada mas lanzar la app con ID 111

@@ -14,6 +14,12 @@ export function NewChain() {
   const [network, setNetwork] = useState(null);
   let id = params.id;
 
+  function mostrarMensaje(mensaje, exito) {
+    // Crea un pop-up con el mensaje proporcionado
+    const tipo = exito ? 'success' : 'error';
+    alert(`${mensaje} (${tipo})`);
+}
+
   
   useEffect(() => {
     if (id) {
@@ -73,7 +79,6 @@ export function NewChain() {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
     fetch("http://localhost:3000", {
       method: "POST",
       headers: {
@@ -82,7 +87,15 @@ export function NewChain() {
       body: JSON.stringify(data),
     }).then((response) => {
       response.json().then((data) => {
-        console.log(data);
+        if (response.ok) {
+          // Red eliminada con éxito
+          mostrarMensaje('Se ha creado la red.', true);
+          window.location.href = "/";
+      } else {
+          // Error al eliminar la red
+          mostrarMensaje('No se ha creado la red.', false);
+      }
+        
       });
     });
 
@@ -204,145 +217,3 @@ export function NewChain() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-import React, { useState }  from "react";
-import {useForm, useFieldArray, useParams } from "react-hook-form";
-
-
-export function NewChain(){
-    //Declaramos el handleSubmit para recojer los datos del formulario
-    const { register, control, handleSubmit,formState: { errors }, } = useForm({ values: network,});
-    const params = useParams();
-    const [network, setNetwork] = useState(null);
-    let id = params.id
-    //Declaramos un state error, para lanzar error en caso de que no exista, lo inizializamos como null
-    const [error, setError] = useState(null);
-    const [ok, setOk] = useState(null);
-
-    useEffect(() => {
-        if (id) {
-          fetch(`http://localhost:5555/${id}`).then((response) => {
-            response.json().then((data) => {
-              console.log(data);
-              setNetwork(data);
-            });
-          }); 
-        } else {
-          setNetwork({
-            id: "",
-            chainId: 0,
-            subnet: "",
-            ipBootnode: "",
-            alloc: [
-              "C077193960479a5e769f27B1ce41469C89Bec299",
-            ],
-            nodos: [
-              {
-                type: "",
-                name: "",
-                ip: "",
-                port: 0,
-              },
-            ],
-          })
-        }
-      }, [id]);
-
-    //Creamos la funcion para añadir la red, será asincrona
-    async function createChain(data){
-    const url = `http://localhost:5555/crearRed`
-    const response = await fetch(url, {
-        method: 'POST', 
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data) 
-    });
-    if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-    } 
-}
-    const {
-        fields: allocFields,
-        append: allocAppend,
-        remove: allocRemove,
-    } = useFieldArray({
-        control,
-        name: "alloc",
-    });
-
-    const onSubmit = async (data) =>{
-        
-        const chainID = data.chainID;
-        createChain(data)
-        //Comprobamos que el data llega desde el formulario
-
-        //Para testear que el formulario funciona, podemos comentar las 2 líneas de codigo siguiente, y descomentar la 3a, asi damos por hecho que el result esta vacio, pero si le asignamos un valor, vemos el cambio
-        const exists = await fetch(`RUTA PARA LA FUNCIÓN DE COMPROBAR CHAIN DADO UN ID${chainID}`)
-        result = await exists.json();
-
-        //Comprobamos el resultado
-        //console.log(result.length)
-
-        //Si el resultado da 0, no existe, sino, ya esta en uso
-        if(result.length === 0){
-            //Ejecutamos la funcion para añadir la red, con el parametro chainID
-            createChain(chainID)
-            setOk("Chain añadida correctamente!")
-        } else {
-            createChain(chainID)
-            //Avisamos por consola que no llega
-            console.log("Doesn´t exist");
-            setError("Este chain ID no está disponible")
-        }
-    }
-    return <div className="container mt-4"> 
-        
-        <form className="form-group" onSubmit={handleSubmit(onSubmit)}>
-            <div className="form-group">
-                <label className="form-style">Introduzca el Nombre de la red</label>
-                <input required {...register('chainName')} type="number" className="form-control"></input>
-                <label className="form-style">Introduzca el número de red "ChainID"</label>
-                <input required {...register('chainID')} type="number" className="form-control"></input>
-
-                <label className="form-style">Introduzca la Subnet</label>
-                <input required {...register('subnet')} type="number" className="form-control"></input>
-
-                <label className="form-style">Introduzca la IP del bootnode</label>
-                <input required {...register('ipBootnode')} type="number" className="form-control"></input>
-
-                <h2>Allocation</h2>
-                <input className="btn btn-primary" type="button" onClick={() => allocAppend("")} value="Add"/>
-
-                <label className="form-style">Introduzca el tipo de nodo</label><br></br>
-                <select {...register('tipoNodo')}>
-                    <option value="signer">Firmador</option>
-                    <option value="miner">Minador</option>
-                    <option value="rpc">RPC</option>
-                </select>
-            </div>
-            <div className="d-flex justify-content-center">
-                <button className="btn btn-light custom-button mt-3">Añadir red</button>
-            </div>
-        </form>
-        {error && <h1 className="alert alert-danger" role="alert">{error}</h1>}
-        {ok && <h1 className="alert alert-success" role="alert">{ok}</h1>}
-    </div>
-    
-}*/

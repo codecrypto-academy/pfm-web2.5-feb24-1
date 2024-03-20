@@ -6,9 +6,7 @@ import { getChain } from "./api";
 
 export function Redinfo() {
     const params = useParams()
-    //console.log(params.id)
     const { isLoading, isError, data } = useQuery(['red',params.id], getChain)
-    //console.log(data)
     if (isLoading)
         return <h1>Cargando</h1>
     if (isError)
