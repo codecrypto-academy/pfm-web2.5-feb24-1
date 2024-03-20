@@ -609,7 +609,7 @@ app.get('/internalBlocks/:net/', async (req, res) => {
             hash: block.hash,
             timestamp: block.timestamp,
             transactions: block.transactions.length,
-            //transHash: block.transactions.map(tx => tx.hash),
+            transHash: block.transactions,
             miner: block.miner,
             gasUsed: block.gasUsed.toString(),
             gasLimit: block.gasLimit.toString(),
