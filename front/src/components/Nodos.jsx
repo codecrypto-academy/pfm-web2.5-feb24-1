@@ -100,7 +100,7 @@ export function Nodos() {
                                     </tr>
                         ))}
                     </table>
-                    <div className="d-flex justify-content-left">
+                    <div className="justify-content-start">
                         <button className="btn btn-light col-2 mx-auto text-center custom-button mb-3" onClick={() => window.location.href = `http://localhost:5173/nuevo-nodo/${redSeleccionada.id}`}>CREAR NODO</button>
                     </div>
                 </div>
