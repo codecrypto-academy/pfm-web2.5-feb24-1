@@ -41,9 +41,7 @@ export function Redinfo() {
                             <td><Link to={`/tx/${params.id}/${item.hash}`}></Link></td>
                             <td>{item.timestamp}</td>
                             <td>{item.transactions}</td>
-                            <td>
-                                {<Link to={`/tx/${params.id}/${item.transHash}`}>{item.transHash}</Link>
-                                }
+                            <td>{<Link to={`/tx/${params.id}/${item.transHash}`}>{item.transHash}</Link>}
                             </td>
                             <td>{item.miner}</td>
                             <td>{item.gasUsed}</td>
@@ -58,15 +56,4 @@ export function Redinfo() {
            
         </pre>
     </div>
-}/* 
-
- {JSON.stringify(data, null, 4)}
-{
-                    data.transactions.map((item, index) =>
-                        <tr key={index}>
-                            <td>
-                            <Link to={`/tx/${item}`}>{item}</Link>
-                            </td>
-                        </tr>
-                    )
-                }*/
+}

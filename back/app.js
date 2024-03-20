@@ -605,9 +605,7 @@ app.get('/internalBlocks/:net/', async (req, res) => {
         const blocks = await Promise.all(blocksPromises);
 
         //res.send(blocks);
-        blocks.forEach(block => {
-            console.log(block.transactions);
-        });
+
         const simplifiedBlocks = blocks.map(block => ({
             number: block.number,
             hash: block.hash,
@@ -779,14 +777,23 @@ app.get('/transaction/:net/:txHash', async (req, res) => {
     }
 });
 
-app.get("/tx/:tx", async (req, res) => {
-    try {
-        const tx = await web3.eth.getTransaction(req.params.tx)
-        const serializedBlock = JSON.stringify(tx, serializeBigInt);
-        res.send(JSON.stringify(serializedBlock))
-    } catch (error) {
-        res.status(500).send({mensaje: error})
-    }
+app.get('/balance/:net/:address', async (req, res) => {
+    const { net, address } = req.params;
+    const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString());
+        const network = networks.find(n => n.id === net);
+        if (!network) {
+            return res.status(404).send('Red no encontrada.');
+        }
+        // Encontrar el nodo RPC en la configuración de la red
+        const rpcNode = network.nodos.find(n => n.type === 'rpc');
+        if (!rpcNode) {
+            return res.status(404).send('Nodo RPC no encontrado en la red.');
+        }
+
+        // Crear el provider
+    const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
+    const balance = await provider.getBalance(address)
+    res.send(balance.toString())
 })
 
 function initialize() {
