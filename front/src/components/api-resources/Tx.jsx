@@ -21,12 +21,12 @@ export function Tx() {
                     <tr>
                         <th>From</th>
                         <td>
-                            <Link to={`/balance/${data.from}`}>{data.from}</Link>
+                            <Link to={`/balance/${params.id}/${data.from}`}>{data.from}</Link>
                         </td>
                     </tr>
                     <tr>
                         <th>To</th>
-                        <td><Link to={`/balance/${data.to}`}>{data.to}</Link></td>
+                        <td><Link to={`/balance/${params.id}/${data.to}`}>{data.to}</Link></td>
                     </tr>
                     <tr>
                         <th>Value</th>
