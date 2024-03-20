@@ -604,10 +604,6 @@ app.get('/internalBlocks/:net/', async (req, res) => {
         }
         const blocks = await Promise.all(blocksPromises);
 
-        //res.send(blocks);
-        blocks.forEach(block => {
-            console.log(block.transactions);
-        });
         const simplifiedBlocks = blocks.map(block => ({
             number: block.number,
             hash: block.hash,

@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom"
 import {useQuery} from "react-query"
 import {getTx} from "./api"
 import { Link } from "react-router-dom"
+
+
 export function Tx() {
     const params = useParams()
     const {isLoading, isError, data} = useQuery([params.id, params.tx], getTx)
