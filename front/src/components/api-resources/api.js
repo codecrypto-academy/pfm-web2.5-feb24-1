@@ -8,12 +8,12 @@ export async function getChain(red) {
 }
 
 export async function getTx(tx) {
-    const response = await fetch(`http://localhost:3000/transaction/tx/${tx.queryKey[1]}`)
+    const response = await fetch(`http://localhost:3000/transaction/${tx.queryKey[0]}/${tx.queryKey[1]}`)
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json()
-    return JSON.parse(data)
+    return data
 }
 
 export async function getBlock(bloque) {

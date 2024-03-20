@@ -5,6 +5,14 @@ import { getChain } from "./api";
 
 
 export function Redinfo() {
+    useEffect(() => {
+        const intervalo = setInterval(() => {
+          //window.location.reload();
+        }, 2000); // Se ejecuta cada 2 segundos
+    
+        // Limpiar el intervalo cuando el componente se desmonte
+        return () => clearInterval(intervalo);
+      }, []); // Pasar un array vacío como segundo argumento para que se ejecute solo una vez
     const params = useParams()
     const { isLoading, isError, data } = useQuery(['red',params.id], getChain)
     if (isLoading)
@@ -19,6 +27,7 @@ export function Redinfo() {
                     <th>Hash</th>
                     <th>TimeStamp</th>
                     <th>Transacciones</th>
+                    <th>Transaccion Hash</th>
                     <th>Miner</th>
                     <th>Gas Usado</th>
                     <th>Gas Limit</th>
@@ -29,9 +38,18 @@ export function Redinfo() {
                     data.map((item, index) =>
                         <tr key={index}>
                             <td>{item.number}</td>
-                            <td>{item.hash}</td>
+                            <td><Link to={`/tx/${params.id}/${item.hash}`}></Link></td>
                             <td>{item.timestamp}</td>
                             <td>{item.transactions}</td>
+                            <td>
+                                {
+                                    item.transHash.map((hash, i) => 
+                                        <div key={i}>
+                                            <Link to={`/tx/${params.id}/${hash}`}>{hash}</Link>
+                                        </div>
+                                    )
+                                }
+                            </td>
                             <td>{item.miner}</td>
                             <td>{item.gasUsed}</td>
                             <td>{item.gasLimit}</td>

@@ -34,7 +34,7 @@ function App() {
         <Route path='privacidad' element={<Privacidad></Privacidad>}></Route>
         <Route path='quienes-somos' element={<QuienesSomos></QuienesSomos>}></Route>
         <Route path='redinfo/:id' element={<Redinfo></Redinfo>}></Route>
-        <Route path='tx/:tx' element={<Tx></Tx>}></Route>
+        <Route path='tx/:id/:tx' element={<Tx></Tx>}></Route>
       </Route>
     </Routes>
   </BrowserRouter >

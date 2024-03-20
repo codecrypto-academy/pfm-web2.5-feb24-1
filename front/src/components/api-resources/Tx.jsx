@@ -4,7 +4,7 @@ import {getTx} from "./api"
 import { Link } from "react-router-dom"
 export function Tx() {
     const params = useParams()
-    const {isLoading, isError, data} = useQuery(['tx', params.tx], getTx)
+    const {isLoading, isError, data} = useQuery([params.id, params.tx], getTx)
     if (isLoading)
         return <h1>Cargando</h1>
     if (isError)

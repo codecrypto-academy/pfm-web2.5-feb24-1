@@ -600,19 +600,23 @@ app.get('/internalBlocks/:net/', async (req, res) => {
         const latestBlockNumber = await provider.getBlockNumber();
         const blocksPromises = [];
         for (let i = Math.max(0, latestBlockNumber - 9); i <= latestBlockNumber; i++) {
-            blocksPromises.push(provider.getBlock(i));
+            blocksPromises.push(provider.getBlock(i, true));
         }
         const blocks = await Promise.all(blocksPromises);
 
         //res.send(blocks);
+        blocks.forEach(block => {
+            console.log(block.transactions);
+        });
         const simplifiedBlocks = blocks.map(block => ({
             number: block.number,
             hash: block.hash,
             timestamp: block.timestamp,
             transactions: block.transactions.length,
+            //transHash: block.transactions.map(tx => tx.hash),
             miner: block.miner,
             gasUsed: block.gasUsed.toString(),
-            gasLimit: block.gasLimit.toString()
+            gasLimit: block.gasLimit.toString(),
         }));
 
         res.json(simplifiedBlocks);
@@ -746,7 +750,6 @@ app.get('/transaction/:net/:txHash', async (req, res) => {
 
         // Opcionalmente, obtener el recibo de la transacción para más detalles, como el gas usado
         const receipt = await provider.getTransactionReceipt(txHash);
-        console.log(tx.value)
         // Simplificar la información de la transacción para la respuesta
         const simplifiedTx = {
             hash: tx.hash,
