@@ -76,7 +76,7 @@ function createGenesis(network) {
     network.alloc.push(fs.readFileSync(`${pathNetwork}/address.txt`).toString().trim())
     genesis.alloc = network.alloc.reduce((acc, i) => {
         const cuenta = i.substring(0, 2) == '0x' ? i.substring(2) : i
-        acc[cuenta] = { balance: "0xad78ebc5ac6200000" }
+        acc[cuenta] = { balance: "1000000000000000000000000000000000000000000" }
         return acc
     }, {})
 
@@ -610,7 +610,6 @@ app.get('/internalBlocks/:net/', async (req, res) => {
             timestamp: block.timestamp,
             transactions: block.transactions.length,
             transHash: block.transactions,
-            miner: block.miner,
             gasUsed: block.gasUsed.toString(),
             gasLimit: block.gasLimit.toString(),
         }));
@@ -661,10 +660,8 @@ app.get('/internalBlock/:net/:blockNumber', async (req, res) => {
     const { net, blockNumber } = req.params;
 
     try {
-        // Convertir blockNumber a un número si es posible, sino usarlo como está
         const blockNum = isNaN(parseInt(blockNumber)) ? blockNumber : parseInt(blockNumber);
 
-        // Buscar la configuración de la red en networks.json
         const networks = JSON.parse(fs.readFileSync('./datos/networks.json').toString());
         const network = networks.find(n => n.id === net);
 
@@ -672,38 +669,35 @@ app.get('/internalBlock/:net/:blockNumber', async (req, res) => {
             return res.status(404).send('Red no encontrada.');
         }
 
-        // Encontrar el nodo RPC en la configuración de la red
         const rpcNode = network.nodos.find(n => n.type === 'rpc');
         if (!rpcNode) {
             return res.status(404).send('Nodo RPC no encontrado en la red.');
         }
 
-        // creamos el provider 
         const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
 
-        // Usar blockNum al obtener el bloque y las transacciones
         const block = await provider.getBlock(blockNum);
         if (!block) {
             return res.status(404).send('Bloque no encontrado.');
         }
+
+        // Obtener los detalles de cada transacción individualmente
+        const transactionsDetails = await Promise.all(block.transactions.map(txHash =>
+            provider.getTransaction(txHash)
+        ));
 
         // Simplificar la información del bloque para la respuesta
         const simplifiedBlock = {
             number: block.number,
             hash: block.hash,
             timestamp: new Date(block.timestamp * 1000).toLocaleString(),
-            totalTransactions: block.transactions.length,
-            transactions: block.transactions.map(tx => {
-                return {
-                    hash: tx.hash,
-                    from: tx.from,
-                    to: tx.to,
-                    value: ethers.utils.formatEther(tx.value),
-                    // Crear el enlace hacia los datos de la transacción
-                    link: `/transaction/${net}/${tx.hash}`
-                };
-            }),
-            miner: block.miner,
+            totalTransactions: transactionsDetails.length,
+            transactions: transactionsDetails.map(tx => ({
+                hash: tx.hash,
+                from: tx.from,
+                to: tx.to,
+                value: tx.value != null ? ethers.formatEther(tx.value) : '0',
+            })),
             gasUsed: block.gasUsed.toString(),
             gasLimit: block.gasLimit.toString(),
         };
@@ -714,6 +708,7 @@ app.get('/internalBlock/:net/:blockNumber', async (req, res) => {
         res.status(500).send('Error al conectar con el nodo RPC o al procesar el bloque.');
     }
 });
+
 
 //Endpoint para mostrar todos los detalles
 app.get('/transaction/:net/:txHash', async (req, res) => {

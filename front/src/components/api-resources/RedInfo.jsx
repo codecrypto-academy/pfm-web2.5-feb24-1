@@ -1,72 +1,69 @@
-import React, { useState, useRef, useEffect } from "react";
-import { useQuery } from 'react-query'
+import React from 'react';
+import { useQuery } from 'react-query';
 import { Link, useParams } from 'react-router-dom';
 import { getChain } from "./api";
-
+import CopyToClipboardButton from './CopyToClipboardButton'; // Asegúrate de tener este componente
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCopy } from '@fortawesome/free-solid-svg-icons';
+import '../api-styles/Bloque.css'; // Ajusta esta importación según la estructura de tu proyecto
 
 export function Redinfo() {
-    useEffect(() => {
-        const intervalo = setInterval(() => {
-          window.location.reload();
-        }, 2000); // Se ejecuta cada 2 segundos
-    
-        // Limpiar el intervalo cuando el componente se desmonte
-        return () => clearInterval(intervalo);
-      }, []); // Pasar un array vacío como segundo argumento para que se ejecute solo una vez
-    const params = useParams()
-    const { isLoading, isError, data } = useQuery(['red',params.id], getChain)
-    if (isLoading)
-        return <h1>Cargando</h1>
-    if (isError)
-        return <h1>Error</h1>
-    return <div><h1>Información de la red y transacciones</h1>
-        <table className="table">
-            <thead>
-                <tr>
-                    <th>Bloque</th>
-                    <th>Hash</th>
-                    <th>TimeStamp</th>
-                    <th>Transacciones</th>
-                    <th>Transaccion Hash</th>
-                    <th>Miner</th>
-                    <th>Gas Usado</th>
-                    <th>Gas Limit</th>
-                </tr>
-            </thead>
-            <tbody>
-            {
-                    data.map((item, index) =>
+    const params = useParams();
+    const { isLoading, isError, data } = useQuery(['red', params.id], getChain);
+
+    // Función para recortar hashes y direcciones largas
+    const shorten = (str) => `${str.substring(0, 6)}...${str.substring(str.length - 4)}`;
+
+    if (isLoading) return <h1>Cargando...</h1>;
+    if (isError) return <h1>Error</h1>;
+
+    return (
+        <div>
+            <h1>Información de la Red y Transacciones</h1>
+            <table className="table">
+                <thead>
+                    <tr>
+                        <th>Bloque</th>
+                        <th>Hash</th>
+                        <th>TimeStamp</th>
+                        <th>Transacciones</th>
+                        <th>Transacción Hash</th>
+                        <th>Gas Usado</th>
+                        <th>Gas Limit</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.map((item, index) => (
                         <tr key={index}>
-                            <td><Link to={`/internalBlock/${params.id}/${item.number}`}></Link></td>
-                            <td><Link to={`/tx/${params.id}/${item.hash}`}></Link></td>
-                            <td>{item.timestamp}</td>
-                            <td>{item.transactions}</td>
+                            <td><Link to={`/internalBlock/${params.id}/${item.number}`}>{item.number}</Link></td>
                             <td>
-                                {<Link to={`/tx/${params.id}/${item.transHash}`}>{item.transHash}</Link>
-                                }
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <CopyToClipboardButton text={item.hash}>
+                                        <FontAwesomeIcon icon={faCopy} />
+                                    </CopyToClipboardButton>
+                                    {shorten(item.hash)}
+                                </div>
                             </td>
-                            <td>{item.miner}</td>
+                            <td>{new Date(item.timestamp * 1000).toLocaleString()}</td>
+                            <td>{item.transHash.length > 0 ? item.transHash.length + ' transacciones' : 'Sin transacciones'}</td>
+                            <td>
+                                <div className={item.transHash.length > 0 ? "transacciones-container" : ""}>
+                                    {item.transHash.length > 0 ? item.transHash.map((transHash, idx) => (
+                                        <div key={idx} style={{ marginBottom: '5px' }}>
+                                            <CopyToClipboardButton text={transHash}>
+                                                <FontAwesomeIcon icon={faCopy} />
+                                            </CopyToClipboardButton>
+                                            <Link to={`/tx/${params.id}/${transHash}`}>{shorten(transHash)}</Link>
+                                        </div>
+                                    )) : 'N/A'}
+                                </div>
+                            </td>
                             <td>{item.gasUsed}</td>
                             <td>{item.gasLimit}</td>
                         </tr>
-                    )
-            }
-            </tbody>
-        </table>
-
-        <pre>
-           
-        </pre>
-    </div>
-}/* 
-
- {JSON.stringify(data, null, 4)}
-{
-                    data.transactions.map((item, index) =>
-                        <tr key={index}>
-                            <td>
-                            <Link to={`/tx/${item}`}>{item}</Link>
-                            </td>
-                        </tr>
-                    )
-                }*/
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}

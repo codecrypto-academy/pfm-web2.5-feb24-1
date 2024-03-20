@@ -1,0 +1,37 @@
+/* api-styles/Bloque.css */
+
+.table-container {
+    margin-top: 20px;
+}
+
+.json-display {
+    background: #333;
+    color: #FFD700;
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    overflow-x: auto;
+}
+
+.copy-icon {
+    margin-left: 5px;
+    cursor: pointer;
+}
+
+.copy-button {
+    border: none;
+    background: none;
+    color: inherit;
+    padding: 0;
+}
+
+
+.transacciones-container {
+    display: block;
+    max-height: 50px; 
+    overflow-y: auto; /* Habilita el desplazamiento vertical */
+    white-space: normal; /* Asegura que el contenido pueda envolverse */
+  }
+  
+  

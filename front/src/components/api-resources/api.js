@@ -17,12 +17,15 @@ export async function getTx(tx) {
 }
 
 export async function getBlock(bloque) {
-    const response = await fetch(`http://localhost:3000/internalBlock/${bloque.queryKey[0]}/${bloque.queryKey[1]}`)
+    console.log(`Red: ${bloque.queryKey[0]}`)
+    console.log(`Bloque: ${bloque.queryKey[1]}`)
+    const response = await fetch(`http://localhost:3000/internalBlock/${bloque.queryKey[0]}/${bloque.queryKey[1]}`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json()
-    return JSON.parse(data)
+    const data = await response.json();
+    console.log(`Bloque: ${JSON.stringify(data)}`); 
+    return data; 
 }
 
 export async function getBalance(address) {
