@@ -7,7 +7,7 @@ import { getChain } from "./api";
 export function Redinfo() {
     useEffect(() => {
         const intervalo = setInterval(() => {
-          //window.location.reload();
+          window.location.reload();
         }, 2000); // Se ejecuta cada 2 segundos
     
         // Limpiar el intervalo cuando el componente se desmonte
@@ -23,7 +23,7 @@ export function Redinfo() {
         <table className="table">
             <thead>
                 <tr>
-                    <th>Transacción</th>
+                    <th>Bloque</th>
                     <th>Hash</th>
                     <th>TimeStamp</th>
                     <th>Transacciones</th>
@@ -42,12 +42,7 @@ export function Redinfo() {
                             <td>{item.timestamp}</td>
                             <td>{item.transactions}</td>
                             <td>
-                                {
-                                    item.transHash.map((hash, i) => 
-                                        <div key={i}>
-                                            <Link to={`/tx/${params.id}/${hash}`}>{hash}</Link>
-                                        </div>
-                                    )
+                                {<Link to={`/tx/${params.id}/${item.transHash}`}>{item.transHash}</Link>
                                 }
                             </td>
                             <td>{item.miner}</td>
