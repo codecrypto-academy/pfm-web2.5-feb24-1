@@ -28,7 +28,7 @@ export function Fucet() {
       }
     }, []);
     async function send(amount) {
-      fetch(`http://localhost:3000/faucet/${params.id}/${account}/${amount}`)
+      fetch(`http://localhost:3000/faucet/mired/${account}/${amount}`)
         .then((response) => {
           response.json().then((data) => {
             setTx(data);
@@ -46,8 +46,9 @@ export function Fucet() {
           Cantidad solicitada 0.1
           <button className="btn btn-primary" onClick={() => {send(0.1)}}>
             Solicitar
-          </button>
+          </button><div className="json-display">
           {tx ? <pre>Transaction: {JSON.stringify(tx,null, 4)}</pre> : <p>Transaction: No hay transacción</p>}
+          </div>
         </div>
       </div>
     );

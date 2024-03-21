@@ -91,16 +91,23 @@ export function Nodos() {
         if (redSeleccionada) {
             return (
                 <div className="text-justify">
-                    <h2>Nodos de la red {redSeleccionada.id}:</h2>
+                    <h2 class="text-center">RED: {redSeleccionada.id}</h2>
+                    
                     <table className="table table-striped table-hover">
+                        <thead>
+                            <th>Nombre del nodo</th>
+                            <th>Eliminar</th>
+                        </thead>
+                        <tbody>
                         {redSeleccionada.nodos?.map((nodo) => (
                                     <tr key={nodo.name} >
                                         <td ><h5 >{nodo.name}</h5></td>
                                         <td ><button type="button" className="btn btn-light custom-button" onClick={() => eliminarNodos(redSeleccionada.id, nodo.name)}>Eliminar</button></td>
                                     </tr>
                         ))}
+                        </tbody>
                     </table>
-                    <div className="justify-content-start">
+                    <div className="d-flex justify-content-center mb-2">
                         <button className="btn btn-light col-2 mx-auto text-center custom-button mb-3" onClick={() => window.location.href = `http://localhost:5173/nuevo-nodo/${redSeleccionada.id}`}>CREAR NODO</button>
                     </div>
                 </div>
