@@ -5,6 +5,13 @@ import { getBalance } from "./api"
 export function Balance() {
     const params = useParams()
     const { isLoading, isError, data } = useQuery([params.id, params.address], getBalance)
+
+    let saldo = "Cargando...";
+
+    if (!isLoading && !isError) {
+        saldo = (parseFloat(data) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 18 }); // Convertir el saldo de wei a ether y mostrarlo como cadena sin redondeo
+    }
+
     if (isLoading)
         return <h1>Cargando</h1>
     if (isError)
@@ -20,7 +27,7 @@ export function Balance() {
             <tbody>
                 <tr>
                     <td>{params.address}</td>
-                    <td>{data}</td>
+                    <td>{saldo.toString()}</td>
                 </tr>
             </tbody>
         </table>

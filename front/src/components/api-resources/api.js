@@ -29,7 +29,6 @@ export async function getBlock(bloque) {
 }
 
 export async function getBalance(address) {
-    console.log(address.queryKey[1])
     const response = await fetch(`http://localhost:3000/balance/${address.queryKey[0]}/${address.queryKey[1]}`)
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

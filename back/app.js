@@ -836,6 +836,8 @@ app.get('/balance/:net/:address', async (req, res) => {
     // Crear el provider
     const provider = new ethers.JsonRpcProvider(`http://localhost:${rpcNode.port}`);
     const balance = await provider.getBalance(address)
-    res.send(balance.toString())
+    const balanceEther = ethers.formatEther(balance);
+    //console.log(balanceEther)
+    res.send(balanceEther.toString())
 })
 

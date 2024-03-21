@@ -79,7 +79,9 @@ export function Home() {
     }
     //Funcion para parar la red
     function pararRed(id) {
+        window.location.reload();
         return fetch(`http://localhost:3000/stop/${id}`)
+        
     }
     //Funcion para eliminar la red
     function eliminarRed(id) {
