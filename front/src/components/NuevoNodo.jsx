@@ -28,7 +28,7 @@ export function NuevoNodo() {
     if (error) {
         return <div>Error: {error.message}</div>;
     }
-
+    //Creamos la funcion onSubmit que se llamará al pulsar el botón de crear nodo, y enviara la información al end point.
     const onSubmit = (data) => {
         console.log(data);
         fetch(`http://localhost:3000/network/${id}/node`, {
@@ -44,7 +44,7 @@ export function NuevoNodo() {
         });
         window.history.back();
     };
-    
+    //Renderizamos el formulario, registramos los datos en el register para al hacer on submit el handle se los mande.
     return (
         <div className="container">
             <h1>Nuevo nodo para la red {id} con IP {data.subnet}</h1>

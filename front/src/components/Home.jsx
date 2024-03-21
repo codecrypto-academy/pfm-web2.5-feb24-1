@@ -12,7 +12,7 @@ export function Home() {
     });
 
     const [status, setStatus] = useState({});
-
+    //Funcion para detectar si la red está levantada
     async function checkStatus(id) {
         const response = await fetch(`http://localhost:3000/status/${id}`);
         const data = await response.json();
@@ -24,7 +24,7 @@ export function Home() {
         const tipo = exito ? 'success' : 'error';
         alert(`${mensaje} (${tipo})`);
     }
-
+    //Si actualizamos el estado "redStatus" cada red esta encendida o apagada
     useEffect(() => {
         if (data) {
             setIsLoading2(true);
@@ -40,6 +40,7 @@ export function Home() {
         }
     }, [data]);
 
+    //Aquí utilizamos un useEffect para detectar si clicamos al engranage de opciones
     useEffect(() => {
         // Agrega un detector de clics al documento
         document.addEventListener("mousedown", handleClick);
@@ -48,7 +49,7 @@ export function Home() {
             document.removeEventListener("mousedown", handleClick);
         };
     }, []);
-
+    //Aquí si clicamos al engranaje, llamamos a la funcion setShouwButtons, que nos desplegará unas opciones.
     const handleClick = e => {
         if (node.current.contains(e.target)) {
             // Dentro del clic, no hacemos nada
@@ -66,21 +67,21 @@ export function Home() {
     const toggleButtons = (id) => {
         setShowButtons(prevState => ({ ...prevState, [id]: !prevState[id] }));
     }
-
+    //Funcion para lanzar la red
     async function lanzarRed(id) {
         await fetch(`http://localhost:3000/up/${id}`);
         window.location.reload();
     }
-
+    //Funcion para reiniciar la red
     async function reiniciarRed(id) {
         await fetch(`http://localhost:3000/restart/${id}`);
         window.location.reload();
     }
-
+    //Funcion para parar la red
     function pararRed(id) {
         return fetch(`http://localhost:3000/stop/${id}`)
     }
-
+    //Funcion para eliminar la red
     function eliminarRed(id) {
         const url = `http://localhost:3000/network/${id}`;
 
@@ -103,9 +104,8 @@ export function Home() {
             });
     }
 
-
+    //Ahora imprimimos todos los datos de la red
     return (
-
         <div className="container mt-5">
             <h2>Listado de Redes</h2>
             <table className="table table-striped text-center">

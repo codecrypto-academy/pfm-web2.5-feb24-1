@@ -7,7 +7,8 @@
 
 import React, { useState } from "react";
 import { useQuery } from 'react-query'
-
+import { useSDK } from "@metamask/sdk-react";
+import { FaEthereum } from 'react-icons/fa';
 export function Nodos() {
 
     //Creamos un estado para guardar la red seleccionada y detectar cuando se cambia.
@@ -45,14 +46,6 @@ export function Nodos() {
     
 
     //Funcion para eliminar nodos/*
-   /* const eliminarNodos = (id,  nodo) =>{
-        fetch(`http://localhost:3000/network/${id}/node/${nodo}`).then((res) => {
-            if (!res) {
-                throw new Error('Hubo un error al eliminar el nodo')
-            }
-            return res.json()
-        })
-    }*/
     function eliminarNodos(id, nodo) {
         const url = `http://localhost:3000/network/${id}/node/${nodo}`;
 
@@ -64,15 +57,15 @@ export function Nodos() {
                 if (response.ok) {
                     window.location.reload();
                     // Red eliminada con éxito
-                   // mostrarMensaje('Se ha eliminado el nodo.', true);
+                    mostrarMensaje('Se ha eliminado el nodo.', true);
                 } else {
                     // Error al eliminar la red
-                   // mostrarMensaje('No se ha eliminado el nodo.', false);
+                    mostrarMensaje('No se ha eliminado el nodo.', false);
                 }
             })
             .catch(error => {
                 console.error('Error en la solicitud:', error);
-               // mostrarMensaje('Error al eliminar la red.', false);
+                mostrarMensaje('Error al eliminar la red.', false);
             });
     }
     // Función para mostrar los nodos de la red seleccionada
@@ -81,13 +74,10 @@ export function Nodos() {
         if (!data || !selectedID) {
             return <div>Selecciona una red válida para ver los nodos.</div>;
         }
-        
         // Busca la red seleccionada por su ID
         // Si encuentra datos con la red seleccionada, nos muestra los nodos, y nos aparece con un botón en cada uno para eliminar
         // Sinó, nos lanza un error
         const redSeleccionada = data.find((chain) => chain.id === selectedID);
-        
-        
         if (redSeleccionada) {
             return (
                 <div className="text-justify">
@@ -96,13 +86,21 @@ export function Nodos() {
                     <table className="table table-striped table-hover">
                         <thead>
                             <th>Nombre del nodo</th>
+                            <th>Tipo del nodo</th>
+                            <th>IP</th>
+                            <th>Puerto</th>
                             <th>Eliminar</th>
+                            <th>Añadir red</th>
                         </thead>
                         <tbody>
                         {redSeleccionada.nodos?.map((nodo) => (
                                     <tr key={nodo.name} >
                                         <td ><h5 >{nodo.name}</h5></td>
+                                        <td ><h5 >{nodo.type}</h5></td>
+                                        <td ><h5 >{nodo.ip}</h5></td>
+                                        <td ><h5 >{nodo.port}</h5></td>
                                         <td ><button type="button" className="btn btn-light custom-button" onClick={() => eliminarNodos(redSeleccionada.id, nodo.name)}>Eliminar</button></td>
+                                        <td><button className="btn btn-light col-2 mx-auto text-center custom-button mb-3" onClick={() => añadirRedAMetamask(redSeleccionada, nodo)}><FaEthereum /></button></td>
                                     </tr>
                         ))}
                         </tbody>
@@ -114,6 +112,39 @@ export function Nodos() {
             );
         } else {
             return <div>No se encontró la red con el ID {selectedID}.</div>;
+        }
+    };
+    const añadirRedAMetamask = async (red, nodo) => {
+        try {
+            // Comprueba si window.ethereum está disponible
+            if (!window.ethereum) {
+                alert('Por favor, instala Metamask primero.');
+                return;
+            }
+            // Define los parámetros de la red
+            const params = [{
+                chainId: `0x${parseInt(red.chainId).toString(16)}`, // Debe ser un número hexadecimal
+                chainName: red.id,
+                rpcUrls: [`http://localhost:${nodo.port}`],
+                blockExplorerUrls: red.blockExplorerUrls,
+                nativeCurrency: {
+                    name: 'ETHP',
+                    symbol: 'ETHP',
+                    decimals: 18
+                }
+            }];
+
+    
+            // Solicita a Metamask que añada la red
+            await window.ethereum.request({
+                method: 'wallet_addEthereumChain',
+                params
+            });
+    
+            alert('Red añadida a Metamask con éxito!');
+        } catch (error) {
+            console.error(error);
+            alert('Hubo un error al añadir la red a Metamask.');
         }
     };
     //Ahora creamos una lista, el select tiene la opcion de onChange, el cual nos cambiará el estado de la red seleccionada

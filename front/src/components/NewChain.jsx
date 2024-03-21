@@ -13,14 +13,14 @@ export function NewChain() {
   const params = useParams();
   const [network, setNetwork] = useState(null);
   let id = params.id;
-
+  
+  // Funcion para crear un pop-up con el mensaje proporcionado
   function mostrarMensaje(mensaje, exito) {
-    // Crea un pop-up con el mensaje proporcionado
     const tipo = exito ? 'success' : 'error';
     alert(`${mensaje} (${tipo})`);
 }
 
-  
+  //Preparamos un use efect donde se mandara los datos al endpoint con algunos por defecto, por si faltasen al crear la red
   useEffect(() => {
     if (id) {
       fetch(`http://localhost:3000/${id}`).then((response) => {
@@ -100,7 +100,7 @@ export function NewChain() {
     });
 
   };
-
+  //Renderizamos el formulario y se registra todo co handleSubmit al onSubmit, para cuando se llame a la función.
   return (
     <div className="container">
       <h1>Add Network</h1>
