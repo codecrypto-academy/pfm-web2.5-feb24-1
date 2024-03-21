@@ -86,6 +86,7 @@ export function Nodos() {
                     <table className="table table-striped table-hover">
                         <thead>
                             <th>Nombre del nodo</th>
+                            <th>Chain ID</th>
                             <th>Tipo del nodo</th>
                             <th>IP</th>
                             <th>Puerto</th>
@@ -96,6 +97,7 @@ export function Nodos() {
                         {redSeleccionada.nodos?.map((nodo) => (
                                     <tr key={nodo.name} >
                                         <td ><h5 >{nodo.name}</h5></td>
+                                        <td ><h5 >{redSeleccionada.chainId}</h5></td>
                                         <td ><h5 >{nodo.type}</h5></td>
                                         <td ><h5 >{nodo.ip}</h5></td>
                                         <td ><h5 >{nodo.port}</h5></td>

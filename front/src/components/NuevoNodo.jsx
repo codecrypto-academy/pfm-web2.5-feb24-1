@@ -42,7 +42,7 @@ export function NuevoNodo() {
                 console.log(data);
             });
         });
-        window.history.back();
+        window.location.href = 'http://localhost:5173/';
     };
     //Renderizamos el formulario, registramos los datos en el register para al hacer on submit el handle se los mande.
     return (
