@@ -1,5 +1,5 @@
 # Proyecto_ETH
-[Click here to watch the video](DEMO/DemoETHProject.mp4)
+[Click here to watch the video](media/DemoETHProject.mp4)
 <video src="DEMO/DemoETHProject.mp4" controls></video>
 
 <video width="320" height="240" controls>
