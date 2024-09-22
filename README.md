@@ -9,4 +9,4 @@
 Versiones:
 1.0.0: Proyecto base con pagina inicial y enrutados
 
-[![Watch the video](https://raw.githubusercontent.com/codecrypto-academy/pfm-web2.5-feb24-1/main/path/to/thumbnail.jpg)](https://raw.githubusercontent.com/codecrypto-academy/pfm-web2.5-feb24-1/media/DemoETHProject.mp4)
+[![Watch the video](https://raw.githubusercontent.com/codecrypto-academy/pfm-web2.5-feb24-1/main/path/to/thumbnail.jpg)](https://raw.github.com/codecrypto-academy/pfm-web2.5-feb24-1/media/DemoETHProject.mp4)
