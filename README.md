@@ -1,5 +1,7 @@
 # Ethereum Project: Ethereum Network Management Tool
 
+![image](https://github.com/user-attachments/assets/24656c6f-f5cc-45cf-b4ea-49d64962e13b)
+
 ## Overview
 Proyecto_ETH is a comprehensive Ethereum network management tool that allows users to create, monitor, and interact with custom Ethereum networks. This full-stack application provides a user-friendly interface for blockchain enthusiasts and developers to experiment with and manage Ethereum-based networks.
 
