@@ -44,11 +44,9 @@ Proyecto_ETH is a comprehensive Ethereum network management tool that allows use
 ## Contributions
 Contributions, issues, and feature requests are welcome. Feel free to check [issues page] if you want to contribute.
 
-## License
-[Specify your license here]
 
 ## Author
-[Your Name]
+Present, Javi, Sergi, Joaquin
 
 ---
 
